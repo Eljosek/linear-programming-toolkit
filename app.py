@@ -391,6 +391,34 @@ def examples():
                 'supply': [120, 130],
                 'demand': [80, 90, 80]
             }
+        },
+        {
+            'title': 'Transporte - Exceso de Oferta (Desbalanceado)',
+            'method': 'transporte',
+            'description': 'Problema con exceso de capacidad. La oferta supera la demanda en 50 unidades. Se balanceará automáticamente.',
+            'dimensions': '3 Orígenes × 3 Destinos',
+            'total_supply': '350 unidades',
+            'total_demand': '300 unidades',
+            'icon': 'warehouse',
+            'data': {
+                'costs': [[7, 8, 5], [6, 9, 11], [10, 7, 8]],
+                'supply': [150, 120, 80],
+                'demand': [100, 100, 100]
+            }
+        },
+        {
+            'title': 'Transporte - Exceso de Demanda (Desbalanceado)',
+            'method': 'transporte',
+            'description': 'Problema con demanda insatisfecha. La demanda supera la oferta en 40 unidades. Se balanceará automáticamente.',
+            'dimensions': '2 Orígenes × 4 Destinos',
+            'total_supply': '200 unidades',
+            'total_demand': '240 unidades',
+            'icon': 'truck-moving',
+            'data': {
+                'costs': [[5, 3, 6, 4], [7, 9, 8, 5]],
+                'supply': [100, 100],
+                'demand': [60, 70, 50, 60]
+            }
         }
     ]
     

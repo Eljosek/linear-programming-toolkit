@@ -13,6 +13,68 @@ from typing import Dict, List, Tuple, Optional
 from copy import deepcopy
 
 
+def balance_problem(costs: List[List[float]], supply: List[float], demand: List[float]) -> Tuple:
+    """
+    Balancea un problema de transporte desbalanceado agregando fila/columna dummy.
+    
+    Args:
+        costs: Matriz de costos m×n
+        supply: Vector de oferta (m elementos)
+        demand: Vector de demanda (n elementos)
+    
+    Returns:
+        Tuple: (costs_balanced, supply_balanced, demand_balanced, balancing_info)
+    """
+    total_supply = sum(supply)
+    total_demand = sum(demand)
+    
+    balancing_info = {
+        'was_balanced': False,
+        'dummy_type': None,
+        'original_dimensions': (len(supply), len(demand)),
+        'difference': 0
+    }
+    
+    # Si ya está balanceado, retornar sin cambios
+    if abs(total_supply - total_demand) < 1e-6:
+        balancing_info['was_balanced'] = True
+        return costs, supply, demand, balancing_info
+    
+    # Copiar datos originales
+    costs_balanced = [row[:] for row in costs]
+    supply_balanced = supply[:]
+    demand_balanced = demand[:]
+    
+    if total_supply > total_demand:
+        # Exceso de oferta: agregar columna dummy (destino ficticio)
+        difference = total_supply - total_demand
+        
+        # Agregar columna de costos 0 a cada fila
+        for row in costs_balanced:
+            row.append(0.0)
+        
+        # Agregar demanda dummy
+        demand_balanced.append(difference)
+        
+        balancing_info['dummy_type'] = 'column'
+        balancing_info['difference'] = round(difference, 2)
+        
+    else:
+        # Exceso de demanda: agregar fila dummy (origen ficticio)
+        difference = total_demand - total_supply
+        
+        # Agregar fila de costos 0
+        costs_balanced.append([0.0] * len(demand))
+        
+        # Agregar oferta dummy
+        supply_balanced.append(difference)
+        
+        balancing_info['dummy_type'] = 'row'
+        balancing_info['difference'] = round(difference, 2)
+    
+    return costs_balanced, supply_balanced, demand_balanced, balancing_info
+
+
 class TransportationProblem:
     """Clase base para el problema de transporte"""
     
@@ -326,29 +388,23 @@ def solve_transportation_problem(costs: List[List[float]],
                 'error': 'El número de columnas de costos debe coincidir con el número de destinos.'
             }
         
-        # Verificar balance
-        total_supply = sum(supply)
-        total_demand = sum(demand)
-        
-        if abs(total_supply - total_demand) > 1e-6:
-            return {
-                'success': False,
-                'error': f'El problema no está balanceado. Oferta total: {total_supply:.2f}, Demanda total: {total_demand:.2f}',
-                'total_supply': total_supply,
-                'total_demand': total_demand
-            }
+        # Balancear el problema automáticamente si es necesario
+        costs_balanced, supply_balanced, demand_balanced, balancing_info = balance_problem(costs, supply, demand)
         
         # Resolver según método
         if method == 'all':
             # Resolver con los 3 métodos
-            nw = NorthwestCorner(costs, supply, demand)
+            nw = NorthwestCorner(costs_balanced, supply_balanced, demand_balanced)
             result_nw = nw.solve()
+            result_nw['balancing_info'] = balancing_info
             
-            mc = MinimumCost(costs, supply, demand)
+            mc = MinimumCost(costs_balanced, supply_balanced, demand_balanced)
             result_mc = mc.solve()
+            result_mc['balancing_info'] = balancing_info
             
-            vogel = VogelMethod(costs, supply, demand)
+            vogel = VogelMethod(costs_balanced, supply_balanced, demand_balanced)
             result_vogel = vogel.solve()
+            result_vogel['balancing_info'] = balancing_info
             
             return {
                 'success': True,
@@ -361,22 +417,25 @@ def solve_transportation_problem(costs: List[List[float]],
                 'comparison': _create_comparison_table(result_nw, result_mc, result_vogel),
                 'costs': costs,
                 'supply': supply,
-                'demand': demand
+                'demand': demand,
+                'balancing_info': balancing_info
             }
         
         elif method == 'northwest':
-            solver = NorthwestCorner(costs, supply, demand)
+            solver = NorthwestCorner(costs_balanced, supply_balanced, demand_balanced)
         elif method == 'minimum_cost':
-            solver = MinimumCost(costs, supply, demand)
+            solver = MinimumCost(costs_balanced, supply_balanced, demand_balanced)
         elif method == 'vogel':
-            solver = VogelMethod(costs, supply, demand)
+            solver = VogelMethod(costs_balanced, supply_balanced, demand_balanced)
         else:
             return {
                 'success': False,
                 'error': f'Método desconocido: {method}'
             }
         
-        return solver.solve()
+        result = solver.solve()
+        result['balancing_info'] = balancing_info
+        return result
     
     except Exception as e:
         return {

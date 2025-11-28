@@ -102,6 +102,23 @@
 <div class="container mb-5">
     {% if result.success %}
         
+        <!-- Alerta de Balanceo (si el problema fue balanceado automáticamente) -->
+        {% if result.balancing_info and not result.balancing_info.was_balanced %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="fas fa-balance-scale me-2"></i>
+                <strong>Problema Balanceado Automáticamente:</strong>
+                {% if result.balancing_info.dummy_type == 'column' %}
+                    Se detectó un exceso de oferta de <strong>{{ result.balancing_info.difference }} unidades</strong>.
+                    Se agregó un <strong>destino ficticio (columna dummy)</strong> con costo 0 para balancear el problema.
+                {% elif result.balancing_info.dummy_type == 'row' %}
+                    Se detectó un exceso de demanda de <strong>{{ result.balancing_info.difference }} unidades</strong>.
+                    Se agregó un <strong>origen ficticio (fila dummy)</strong> con costo 0 para balancear el problema.
+                {% endif %}
+                Las unidades asignadas a orígenes/destinos ficticios representan capacidad no utilizada o demanda no satisfecha.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+        
         {% if result.method == 'Comparación de los 3 métodos' %}
             <!-- MODO COMPARACIÓN -->
             <div class="alert alert-info mb-4">
