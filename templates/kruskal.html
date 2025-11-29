@@ -45,19 +45,19 @@
 
 {% block content %}
 <!-- Header -->
-<div class="kruskal-theme text-white py-4 mb-4">
+<div class="py-4 mb-4" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-bottom: 4px solid #10b981;">
     <div class="container">
-        <h1 class="display-5 fw-bold mb-2">
-            <i class="fas fa-project-diagram me-3"></i>Algoritmo de Kruskal
+        <h1 class="display-5 fw-bold mb-2" style="color: #047857;">
+            <i class="fas fa-project-diagram me-3" style="color: #10b981;"></i>Algoritmo de Kruskal
         </h1>
-        <p class="lead mb-0">Encuentra el árbol de expansión mínima (MST)</p>
+        <p class="lead mb-0" style="color: #047857;">Encuentra el árbol de expansión mínima (MST)</p>
     </div>
 </div>
 
 <div class="container mb-5">
-    <div class="row">
+    <div class="row justify-content-center">
         <!-- Formulario -->
-        <div class="col-lg-6 mb-4">
+        <div class="col-lg-8 mb-4">
             <div class="card shadow-lg">
                 <div class="card-header bg-white">
                     <h4 class="mb-0"><i class="fas fa-network-wired me-2" style="color: #10b981;"></i>Definir Grafo</h4>
@@ -85,12 +85,17 @@
                         <!-- Input: Lista de Aristas -->
                         <div id="edges_input" class="format-input">
                             <div class="mb-3">
-                                <label for="edges_text" class="form-label fw-bold">
-                                    <i class="fas fa-list-ul me-2"></i>Aristas del Grafo
+                                <label for="edges_text" class="form-label fw-bold" style="color: #047857;">
+                                    <i class="fas fa-list-ul me-2" style="color: #10b981;"></i>Aristas del Grafo
                                 </label>
                                 <textarea class="form-control font-monospace" id="edges_text" name="edges_text" 
-                                        rows="10" placeholder="Formato: nodo1 nodo2 peso&#10;Ejemplo:&#10;1 2 4&#10;1 3 2&#10;2 3 5&#10;2 4 10&#10;3 4 3&#10;4 5 7&#10;3 5 8"></textarea>
-                                <small class="text-muted">Cada línea: nodo1 nodo2 peso (grafo no dirigido)</small>
+                                        rows="10" 
+                                        placeholder="Formato: nodo1 nodo2 peso (nodos pueden ser números o letras)&#10;&#10;Ejemplos con números:&#10;1 2 4&#10;1 3 2&#10;2 4 10&#10;&#10;Ejemplos con letras:&#10;A B 4&#10;A C 2&#10;B D 10"
+                                        style="border: 2px solid #d1fae5; border-radius: 8px;"></textarea>
+                                <small style="color: #047857;">
+                                    <i class="fas fa-lightbulb me-1" style="color: #f59e0b;"></i>
+                                    <strong>Formato:</strong> <code style="background: #d1fae5; color: #047857; padding: 2px 6px; border-radius: 4px;">nodo1 nodo2 peso</code> | Grafo no dirigido
+                                </small>
                             </div>
                         </div>
                         
@@ -106,10 +111,10 @@
                             </div>
                         </div>
                         
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle me-2"></i>
-                            <strong>Nota:</strong> El algoritmo de Kruskal trabaja con grafos <strong>no dirigidos</strong>. 
-                            Las aristas se consideran bidireccionales automáticamente.
+                        <div class="alert" style="background: #ecfdf5; border-left: 4px solid #10b981;">
+                            <i class="fas fa-info-circle me-2" style="color: #047857;"></i>
+                            <strong style="color: #047857;">Nota:</strong> <span style="color: #047857;">El algoritmo de Kruskal trabaja con grafos <strong>no dirigidos</strong>. 
+                            Las aristas se consideran bidireccionales automáticamente.</span>
                         </div>
                         
                         <!-- Botones -->
@@ -125,60 +130,34 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Información -->
-        <div class="col-lg-6">
-            <div class="card shadow-lg mb-4">
-                <div class="card-header bg-white">
-                    <h4 class="mb-0"><i class="fas fa-info-circle me-2" style="color: #10b981;"></i>Sobre el Algoritmo</h4>
-                </div>
-                <div class="card-body">
-                    <h5 class="text-dark">¿Qué es Kruskal?</h5>
-                    <p>El algoritmo de Kruskal encuentra el <strong>Árbol de Expansión Mínima (MST)</strong> de un grafo conexo no dirigido: un subconjunto de aristas que conecta todos los nodos con el <strong>menor peso total posible</strong>, sin formar ciclos.</p>
-                    
-                    <h5 class="text-dark mt-3">Características</h5>
-                    <ul>
-                        <li>Complejidad: <code>O(E log E)</code> o <code>O(E log V)</code></li>
-                        <li>Usa estructura <strong>Union-Find</strong></li>
-                        <li>Ordena aristas por peso <strong>ascendente</strong></li>
-                        <li>Agrega aristas que no forman ciclos</li>
-                        <li>Requiere <strong>V - 1</strong> aristas (V = nodos)</li>
-                    </ul>
-                    
-                    <h5 class="text-dark mt-3">Aplicaciones</h5>
-                    <ul>
-                        <li><i class="fas fa-bolt me-2"></i>Diseño de redes eléctricas</li>
-                        <li><i class="fas fa-wifi me-2"></i>Redes de telecomunicaciones</li>
-                        <li><i class="fas fa-water me-2"></i>Sistemas de tuberías y alcantarillado</li>
-                        <li><i class="fas fa-road me-2"></i>Planificación de carreteras</li>
-                        <li><i class="fas fa-ethernet me-2"></i>Cables de fibra óptica</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="card shadow-lg">
-                <div class="card-header bg-white">
-                    <h4 class="mb-0"><i class="fas fa-question-circle me-2" style="color: #10b981;"></i>Cómo Usar</h4>
-                </div>
-                <div class="card-body">
-                    <h6 class="fw-bold">Formato de Lista de Aristas:</h6>
-                    <pre class="bg-light p-3 rounded"><code>1 2 4    # Arista entre nodo 1 y 2 con peso 4
-1 3 2    # Arista entre nodo 1 y 3 con peso 2
-2 3 5
-2 4 10
-3 4 3</code></pre>
-                    
-                    <h6 class="fw-bold mt-3">Formato de Matriz (Simétrica):</h6>
-                    <pre class="bg-light p-3 rounded"><code>0 4 2    # Fila 1: nodo 1 conectado a 2(peso 4) y 3(peso 2)
-4 0 5    # Fila 2: nodo 2 conectado a 1(peso 4) y 3(peso 5)
-2 5 0    # Fila 3: conexiones simétricas</code></pre>
-                    
-                    <div class="alert alert-warning mt-3 mb-0">
-                        <strong><i class="fas fa-exclamation-triangle me-2"></i>Importante:</strong>
-                        <ul class="mb-0">
-                            <li>El grafo debe ser <strong>conexo</strong> (todos los nodos alcanzables)</li>
-                            <li>Si el grafo no es conexo, el algoritmo detectará el error</li>
-                        </ul>
+    </div>
+    
+    <!-- Ayuda rápida -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-lg-8">
+            <div class="alert" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-left: 5px solid #10b981;">
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center">
+                        <i class="fas fa-tree" style="font-size: 3rem; color: #10b981;"></i>
+                    </div>
+                    <div class="col-md-10">
+                        <h5 style="color: #047857; margin-bottom: 10px;">
+                            <i class="fas fa-info-circle me-2" style="color: #10b981;"></i>Guía Rápida
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p style="color: #047857; margin-bottom: 8px;"><strong>📝 Con números:</strong></p>
+                                <code style="background: white; color: #047857; padding: 8px; border-radius: 4px; display: block; border: 1px solid #10b981;">1 2 4<br>2 3 5<br>3 4 2</code>
+                            </div>
+                            <div class="col-md-6">
+                                <p style="color: #047857; margin-bottom: 8px;"><strong>📝 Con letras:</strong></p>
+                                <code style="background: white; color: #047857; padding: 8px; border-radius: 4px; display: block; border: 1px solid #10b981;">A B 4<br>B C 5<br>C D 2</code>
+                            </div>
+                        </div>
+                        <p style="color: #047857; margin-top: 10px; margin-bottom: 0;">
+                            <i class="fas fa-check-circle me-1" style="color: #10b981;"></i>
+                            <strong>MST:</strong> Conecta todos los nodos con el menor costo total sin ciclos
+                        </p>
                     </div>
                 </div>
             </div>

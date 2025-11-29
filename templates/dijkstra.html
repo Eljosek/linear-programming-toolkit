@@ -45,19 +45,19 @@
 
 {% block content %}
 <!-- Header -->
-<div class="dijkstra-theme text-white py-4 mb-4">
+<div class="py-4 mb-4" style="background: linear-gradient(135deg, #ccfbf1 0%, #99f6e4 100%); border-bottom: 4px solid #14b8a6;">
     <div class="container">
-        <h1 class="display-5 fw-bold mb-2">
-            <i class="fas fa-route me-3"></i>Algoritmo de Dijkstra
+        <h1 class="display-5 fw-bold mb-2" style="color: #0f766e;">
+            <i class="fas fa-route me-3" style="color: #14b8a6;"></i>Algoritmo de Dijkstra
         </h1>
-        <p class="lead mb-0">Encuentra el camino más corto entre dos nodos</p>
+        <p class="lead mb-0" style="color: #0f766e;">Encuentra el camino más corto entre dos nodos</p>
     </div>
 </div>
 
 <div class="container mb-5">
-    <div class="row">
+    <div class="row justify-content-center">
         <!-- Formulario -->
-        <div class="col-lg-6 mb-4">
+        <div class="col-lg-8 mb-4">
             <div class="card shadow-lg">
                 <div class="card-header bg-white">
                     <h4 class="mb-0"><i class="fas fa-project-diagram me-2" style="color: #14b8a6;"></i>Definir Grafo</h4>
@@ -85,12 +85,17 @@
                         <!-- Input: Lista de Aristas -->
                         <div id="edges_input" class="format-input">
                             <div class="mb-3">
-                                <label for="edges_text" class="form-label fw-bold">
-                                    <i class="fas fa-list-ul me-2"></i>Aristas del Grafo
+                                <label for="edges_text" class="form-label fw-bold" style="color: #0f766e;">
+                                    <i class="fas fa-list-ul me-2" style="color: #14b8a6;"></i>Aristas del Grafo
                                 </label>
                                 <textarea class="form-control font-monospace" id="edges_text" name="edges_text" 
-                                        rows="8" placeholder="Formato: nodo1 nodo2 peso&#10;Ejemplo:&#10;1 2 4&#10;1 3 2&#10;2 3 1&#10;2 4 5&#10;3 4 8&#10;4 5 3"></textarea>
-                                <small class="text-muted">Cada línea: nodo_origen nodo_destino peso</small>
+                                        rows="10" 
+                                        placeholder="Formato: nodo1 nodo2 peso (nodos pueden ser números o letras)&#10;&#10;Ejemplos con números:&#10;1 2 4&#10;1 3 2&#10;2 4 5&#10;&#10;Ejemplos con letras:&#10;A B 4&#10;A C 2&#10;B D 5"
+                                        style="border: 2px solid #ccfbf1; border-radius: 8px;"></textarea>
+                                <small style="color: #0f766e;">
+                                    <i class="fas fa-lightbulb me-1" style="color: #f59e0b;"></i>
+                                    <strong>Formato:</strong> <code style="background: #ccfbf1; color: #0f766e; padding: 2px 6px; border-radius: 4px;">origen destino peso</code> | Puedes usar números o letras como nodos
+                                </small>
                             </div>
                         </div>
                         
@@ -109,32 +114,39 @@
                         <!-- Nodo origen y destino -->
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="start_node" class="form-label fw-bold">
-                                    <i class="fas fa-play-circle me-2"></i>Nodo Origen
+                                <label for="start_node" class="form-label fw-bold" style="color: #0f766e;">
+                                    <i class="fas fa-play-circle me-2" style="color: #10b981;"></i>Nodo Origen
                                 </label>
-                                <input type="number" class="form-control" id="start_node" name="start_node" 
-                                       required min="1" placeholder="Ej: 1">
-                                <small class="text-muted">Nodo de inicio del camino</small>
+                                <input type="text" class="form-control" id="start_node" name="start_node" 
+                                       required placeholder="Ej: 1 o A" style="border: 2px solid #ccfbf1;">
+                                <small style="color: #0f766e;">Nodo de inicio (número o letra)</small>
                             </div>
                             
                             <div class="col-md-6 mb-3">
-                                <label for="end_node" class="form-label fw-bold">
-                                    <i class="fas fa-flag-checkered me-2"></i>Nodo Destino
+                                <label for="end_node" class="form-label fw-bold" style="color: #0f766e;">
+                                    <i class="fas fa-flag-checkered me-2" style="color: #ef4444;"></i>Nodo Destino
+                                    <span class="badge" style="background: #fef3c7; color: #92400e; font-size: 0.75rem;">Opcional</span>
                                 </label>
-                                <input type="number" class="form-control" id="end_node" name="end_node" 
-                                       min="1" placeholder="Ej: 5 (opcional)">
-                                <small class="text-muted">Opcional: dejar vacío para todos</small>
+                                <input type="text" class="form-control" id="end_node" name="end_node" 
+                                       placeholder="Ej: 5 o E" style="border: 2px solid #ccfbf1;">
+                                <small style="color: #0f766e;">
+                                    <i class="fas fa-info-circle me-1"></i>Dejar vacío para calcular a <strong>todos</strong> los nodos
+                                </small>
                             </div>
                         </div>
                         
                         <!-- Checkbox: Grafo dirigido -->
                         <div class="mb-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="directed" name="directed" value="true">
-                                <label class="form-check-label" for="directed">
-                                    <strong>Grafo Dirigido</strong>
-                                    <small class="d-block text-muted">Marcar si las aristas tienen dirección (A→B ≠ B→A)</small>
-                                </label>
+                            <div class="card" style="background: #f0fdfa; border: 2px solid #14b8a6;">
+                                <div class="card-body py-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="directed" name="directed" value="true">
+                                        <label class="form-check-label fw-bold" for="directed" style="color: #0f766e;">
+                                            <i class="fas fa-arrows-alt-h me-2" style="color: #14b8a6;"></i>Grafo Dirigido
+                                            <span class="badge ms-2" style="background: #ccfbf1; color: #0f766e; font-size: 0.75rem;">Las aristas tienen dirección A→B</span>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
@@ -151,52 +163,35 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Información -->
-        <div class="col-lg-6">
-            <div class="card shadow-lg mb-4">
-                <div class="card-header bg-white">
-                    <h4 class="mb-0"><i class="fas fa-info-circle me-2" style="color: #14b8a6;"></i>Sobre el Algoritmo</h4>
-                </div>
-                <div class="card-body">
-                    <h5 class="text-dark">¿Qué es Dijkstra?</h5>
-                    <p>El algoritmo de Dijkstra encuentra el <strong>camino más corto</strong> desde un nodo origen a todos los demás nodos (o a un nodo específico) en un grafo con pesos no negativos.</p>
-                    
-                    <h5 class="text-dark mt-3">Características</h5>
-                    <ul>
-                        <li>Complejidad: <code>O((V + E) log V)</code> con heap</li>
-                        <li>Funciona con grafos <strong>dirigidos</strong> y <strong>no dirigidos</strong></li>
-                        <li>Requiere pesos <strong>no negativos</strong></li>
-                        <li>Garantiza el camino óptimo</li>
-                    </ul>
-                    
-                    <h5 class="text-dark mt-3">Aplicaciones</h5>
-                    <ul>
-                        <li><i class="fas fa-road me-2"></i>Navegación GPS y rutas óptimas</li>
-                        <li><i class="fas fa-network-wired me-2"></i>Enrutamiento en redes</li>
-                        <li><i class="fas fa-map me-2"></i>Planificación de rutas de entrega</li>
-                        <li><i class="fas fa-project-diagram me-2"></i>Análisis de redes sociales</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="card shadow-lg">
-                <div class="card-header bg-white">
-                    <h4 class="mb-0"><i class="fas fa-question-circle me-2" style="color: #14b8a6;"></i>Cómo Usar</h4>
-                </div>
-                <div class="card-body">
-                    <h6 class="fw-bold">Formato de Lista de Aristas:</h6>
-                    <pre class="bg-light p-3 rounded"><code>1 2 4    # Arista de nodo 1 a 2 con peso 4
-1 3 2
-2 4 5
-3 4 8</code></pre>
-                    
-                    <h6 class="fw-bold mt-3">Formato de Matriz:</h6>
-                    <pre class="bg-light p-3 rounded"><code>0 4 2    # Fila 1: nodo 1 conectado a 2(peso 4) y 3(peso 2)
-4 0 5    # Fila 2: nodo 2 conectado a 1(peso 4) y 3(peso 5)
-2 5 0    # Fila 3: nodo 3 conectado a 1 y 2</code></pre>
-                    
-                    <p class="mb-0 mt-3"><strong>Nota:</strong> Si no especificas nodo destino, se calculan los caminos más cortos a <strong>todos</strong> los nodos desde el origen.</p>
+    </div>
+    
+    <!-- Ayuda rápida -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-lg-8">
+            <div class="alert" style="background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); border-left: 5px solid #14b8a6;">
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center">
+                        <i class="fas fa-lightbulb" style="font-size: 3rem; color: #f59e0b;"></i>
+                    </div>
+                    <div class="col-md-10">
+                        <h5 style="color: #0f766e; margin-bottom: 10px;">
+                            <i class="fas fa-info-circle me-2" style="color: #14b8a6;"></i>Guía Rápida
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p style="color: #0f766e; margin-bottom: 8px;"><strong>📝 Con números:</strong></p>
+                                <code style="background: white; color: #0f766e; padding: 8px; border-radius: 4px; display: block; border: 1px solid #14b8a6;">1 2 4<br>2 3 5<br>3 4 2</code>
+                            </div>
+                            <div class="col-md-6">
+                                <p style="color: #0f766e; margin-bottom: 8px;"><strong>📝 Con letras:</strong></p>
+                                <code style="background: white; color: #0f766e; padding: 8px; border-radius: 4px; display: block; border: 1px solid #14b8a6;">A B 4<br>B C 5<br>C D 2</code>
+                            </div>
+                        </div>
+                        <p style="color: #0f766e; margin-top: 10px; margin-bottom: 0;">
+                            <i class="fas fa-check-circle me-1" style="color: #10b981;"></i>
+                            <strong>Formato:</strong> <code style="background: #14b8a6; color: white; padding: 2px 8px; border-radius: 4px;">origen destino peso</code>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

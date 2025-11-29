@@ -595,10 +595,20 @@ def dijkstra_method():
     if request.method == 'POST':
         try:
             input_format = request.form.get('input_format', 'edges')
-            start_node = int(request.form.get('start_node'))
+            start_node_str = request.form.get('start_node', '').strip()
             end_node_str = request.form.get('end_node', '').strip()
-            end_node = int(end_node_str) if end_node_str else None
             directed = request.form.get('directed') == 'true'
+            
+            # Intentar convertir a int, si falla mantener como string (para letras)
+            try:
+                start_node = int(start_node_str)
+            except ValueError:
+                start_node = start_node_str
+            
+            try:
+                end_node = int(end_node_str) if end_node_str else None
+            except ValueError:
+                end_node = end_node_str if end_node_str else None
             
             edges = []
             
@@ -614,7 +624,18 @@ def dijkstra_method():
                     if line and not line.startswith('#'):
                         parts = line.split()
                         if len(parts) >= 3:
-                            u, v, w = int(parts[0]), int(parts[1]), float(parts[2])
+                            # Intentar parsear nodos (pueden ser números o letras)
+                            try:
+                                u = int(parts[0])
+                            except ValueError:
+                                u = parts[0]
+                            
+                            try:
+                                v = int(parts[1])
+                            except ValueError:
+                                v = parts[1]
+                            
+                            w = float(parts[2])
                             edges.append((u, v, w))
             
             elif input_format == 'matrix':
@@ -678,7 +699,18 @@ def kruskal_method():
                     if line and not line.startswith('#'):
                         parts = line.split()
                         if len(parts) >= 3:
-                            u, v, w = int(parts[0]), int(parts[1]), float(parts[2])
+                            # Intentar parsear nodos (pueden ser números o letras)
+                            try:
+                                u = int(parts[0])
+                            except ValueError:
+                                u = parts[0]
+                            
+                            try:
+                                v = int(parts[1])
+                            except ValueError:
+                                v = parts[1]
+                            
+                            w = float(parts[2])
                             edges.append((u, v, w))
             
             elif input_format == 'matrix':
