@@ -64,6 +64,14 @@
                             <li><a class="dropdown-item" href="{{ url_for('transportation_method') }}">
                                 <i class="fas fa-truck-moving" style="color: #dc2626;"></i> Modelo de Transporte
                             </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Algoritmos de Redes</h6></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dijkstra_method') }}">
+                                <i class="fas fa-route" style="color: #14b8a6;"></i> Dijkstra (Camino Corto)
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('kruskal_method') }}">
+                                <i class="fas fa-project-diagram" style="color: #10b981;"></i> Kruskal (MST)
+                            </a></li>
                         </ul>
                     </li>
                     <li class="nav-item">

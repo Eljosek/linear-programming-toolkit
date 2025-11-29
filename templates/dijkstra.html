@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}Dijkstra - Camino Más Corto{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --dijkstra-primary: #14b8a6;
+        --dijkstra-secondary: #2dd4bf;
+        --dijkstra-light: #ccfbf1;
+        --dijkstra-dark: #0f766e;
+    }
+    
+    .dijkstra-theme {
+        background: linear-gradient(135deg, var(--dijkstra-primary) 0%, var(--dijkstra-secondary) 100%);
+    }
+    
+    .badge-dijkstra {
+        background: var(--dijkstra-primary);
+        color: white;
+    }
+    
+    .btn-dijkstra {
+        background: var(--dijkstra-primary);
+        border-color: var(--dijkstra-primary);
+        color: white;
+    }
+    
+    .btn-dijkstra:hover {
+        background: var(--dijkstra-dark);
+        border-color: var(--dijkstra-dark);
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--dijkstra-primary);
+        border-color: var(--dijkstra-primary);
+    }
+    
+    .input-format-selector .btn-check:checked + .btn {
+        background-color: var(--dijkstra-primary);
+        border-color: var(--dijkstra-primary);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="dijkstra-theme text-white py-4 mb-4">
+    <div class="container">
+        <h1 class="display-5 fw-bold mb-2">
+            <i class="fas fa-route me-3"></i>Algoritmo de Dijkstra
+        </h1>
+        <p class="lead mb-0">Encuentra el camino más corto entre dos nodos</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row">
+        <!-- Formulario -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-lg">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0"><i class="fas fa-project-diagram me-2" style="color: #14b8a6;"></i>Definir Grafo</h4>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('dijkstra_method') }}" method="POST" id="dijkstraForm">
+                        
+                        <!-- Selector de formato -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Formato de Entrada</label>
+                            <div class="btn-group w-100 input-format-selector" role="group">
+                                <input type="radio" class="btn-check" name="input_format" id="format_edges" value="edges" checked>
+                                <label class="btn btn-outline-secondary" for="format_edges">
+                                    <i class="fas fa-list me-2"></i>Lista de Aristas
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="input_format" id="format_matrix" value="matrix">
+                                <label class="btn btn-outline-secondary" for="format_matrix">
+                                    <i class="fas fa-table me-2"></i>Matriz de Adyacencia
+                                </label>
+                            </div>
+                            <small class="text-muted">Selecciona cómo deseas ingresar el grafo</small>
+                        </div>
+                        
+                        <!-- Input: Lista de Aristas -->
+                        <div id="edges_input" class="format-input">
+                            <div class="mb-3">
+                                <label for="edges_text" class="form-label fw-bold">
+                                    <i class="fas fa-list-ul me-2"></i>Aristas del Grafo
+                                </label>
+                                <textarea class="form-control font-monospace" id="edges_text" name="edges_text" 
+                                        rows="8" placeholder="Formato: nodo1 nodo2 peso&#10;Ejemplo:&#10;1 2 4&#10;1 3 2&#10;2 3 1&#10;2 4 5&#10;3 4 8&#10;4 5 3"></textarea>
+                                <small class="text-muted">Cada línea: nodo_origen nodo_destino peso</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Input: Matriz de Adyacencia -->
+                        <div id="matrix_input" class="format-input" style="display: none;">
+                            <div class="mb-3">
+                                <label for="matrix_text" class="form-label fw-bold">
+                                    <i class="fas fa-table me-2"></i>Matriz de Adyacencia
+                                </label>
+                                <textarea class="form-control font-monospace" id="matrix_text" name="matrix_text" 
+                                        rows="8" placeholder="Formato: matriz cuadrada n×n&#10;Ejemplo (0 = sin conexión):&#10;0 4 2 0 0&#10;4 0 1 5 0&#10;2 1 0 8 0&#10;0 5 8 0 3&#10;0 0 0 3 0"></textarea>
+                                <small class="text-muted">Cada línea es una fila, 0 = sin conexión, nodos numerados desde 1</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Nodo origen y destino -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="start_node" class="form-label fw-bold">
+                                    <i class="fas fa-play-circle me-2"></i>Nodo Origen
+                                </label>
+                                <input type="number" class="form-control" id="start_node" name="start_node" 
+                                       required min="1" placeholder="Ej: 1">
+                                <small class="text-muted">Nodo de inicio del camino</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="end_node" class="form-label fw-bold">
+                                    <i class="fas fa-flag-checkered me-2"></i>Nodo Destino
+                                </label>
+                                <input type="number" class="form-control" id="end_node" name="end_node" 
+                                       min="1" placeholder="Ej: 5 (opcional)">
+                                <small class="text-muted">Opcional: dejar vacío para todos</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Checkbox: Grafo dirigido -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="directed" name="directed" value="true">
+                                <label class="form-check-label" for="directed">
+                                    <strong>Grafo Dirigido</strong>
+                                    <small class="d-block text-muted">Marcar si las aristas tienen dirección (A→B ≠ B→A)</small>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Botones -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-dijkstra btn-lg">
+                                <i class="fas fa-play me-2"></i>Ejecutar Dijkstra
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="location.href='{{ url_for('examples') }}'">
+                                <i class="fas fa-lightbulb me-2"></i>Ver Ejemplos
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Información -->
+        <div class="col-lg-6">
+            <div class="card shadow-lg mb-4">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0"><i class="fas fa-info-circle me-2" style="color: #14b8a6;"></i>Sobre el Algoritmo</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="text-dark">¿Qué es Dijkstra?</h5>
+                    <p>El algoritmo de Dijkstra encuentra el <strong>camino más corto</strong> desde un nodo origen a todos los demás nodos (o a un nodo específico) en un grafo con pesos no negativos.</p>
+                    
+                    <h5 class="text-dark mt-3">Características</h5>
+                    <ul>
+                        <li>Complejidad: <code>O((V + E) log V)</code> con heap</li>
+                        <li>Funciona con grafos <strong>dirigidos</strong> y <strong>no dirigidos</strong></li>
+                        <li>Requiere pesos <strong>no negativos</strong></li>
+                        <li>Garantiza el camino óptimo</li>
+                    </ul>
+                    
+                    <h5 class="text-dark mt-3">Aplicaciones</h5>
+                    <ul>
+                        <li><i class="fas fa-road me-2"></i>Navegación GPS y rutas óptimas</li>
+                        <li><i class="fas fa-network-wired me-2"></i>Enrutamiento en redes</li>
+                        <li><i class="fas fa-map me-2"></i>Planificación de rutas de entrega</li>
+                        <li><i class="fas fa-project-diagram me-2"></i>Análisis de redes sociales</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card shadow-lg">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0"><i class="fas fa-question-circle me-2" style="color: #14b8a6;"></i>Cómo Usar</h4>
+                </div>
+                <div class="card-body">
+                    <h6 class="fw-bold">Formato de Lista de Aristas:</h6>
+                    <pre class="bg-light p-3 rounded"><code>1 2 4    # Arista de nodo 1 a 2 con peso 4
+1 3 2
+2 4 5
+3 4 8</code></pre>
+                    
+                    <h6 class="fw-bold mt-3">Formato de Matriz:</h6>
+                    <pre class="bg-light p-3 rounded"><code>0 4 2    # Fila 1: nodo 1 conectado a 2(peso 4) y 3(peso 2)
+4 0 5    # Fila 2: nodo 2 conectado a 1(peso 4) y 3(peso 5)
+2 5 0    # Fila 3: nodo 3 conectado a 1 y 2</code></pre>
+                    
+                    <p class="mb-0 mt-3"><strong>Nota:</strong> Si no especificas nodo destino, se calculan los caminos más cortos a <strong>todos</strong> los nodos desde el origen.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Cambiar entre formato de aristas y matriz
+    const formatEdges = document.getElementById('format_edges');
+    const formatMatrix = document.getElementById('format_matrix');
+    const edgesInput = document.getElementById('edges_input');
+    const matrixInput = document.getElementById('matrix_input');
+    
+    formatEdges.addEventListener('change', function() {
+        if (this.checked) {
+            edgesInput.style.display = 'block';
+            matrixInput.style.display = 'none';
+            document.getElementById('edges_text').required = true;
+            document.getElementById('matrix_text').required = false;
+        }
+    });
+    
+    formatMatrix.addEventListener('change', function() {
+        if (this.checked) {
+            edgesInput.style.display = 'none';
+            matrixInput.style.display = 'block';
+            document.getElementById('edges_text').required = false;
+            document.getElementById('matrix_text').required = true;
+        }
+    });
+    
+    // Cargar ejemplo desde localStorage
+    window.addEventListener('load', function() {
+        const exampleEdges = localStorage.getItem('example_dijkstra_edges');
+        const exampleStart = localStorage.getItem('example_dijkstra_start');
+        const exampleEnd = localStorage.getItem('example_dijkstra_end');
+        const exampleDirected = localStorage.getItem('example_dijkstra_directed');
+        
+        if (exampleEdges) {
+            document.getElementById('edges_text').value = exampleEdges;
+            if (exampleStart) document.getElementById('start_node').value = exampleStart;
+            if (exampleEnd) document.getElementById('end_node').value = exampleEnd;
+            if (exampleDirected === 'true') document.getElementById('directed').checked = true;
+            
+            // Limpiar localStorage
+            localStorage.removeItem('example_dijkstra_edges');
+            localStorage.removeItem('example_dijkstra_start');
+            localStorage.removeItem('example_dijkstra_end');
+            localStorage.removeItem('example_dijkstra_directed');
+        }
+    });

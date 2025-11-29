@@ -17,6 +17,8 @@ import simplex_tableau
 import dual_simplex_tableau
 import two_phase_simplex
 import transportation_model
+import dijkstra_algorithm
+import kruskal_algorithm
 
 # Recargar módulos en cada petición (útil en desarrollo)
 if 'WERKZEUG_RUN_MAIN' in os.environ or not os.environ.get('FLASK_ENV'):
@@ -24,6 +26,8 @@ if 'WERKZEUG_RUN_MAIN' in os.environ or not os.environ.get('FLASK_ENV'):
     importlib.reload(dual_simplex_tableau)
     importlib.reload(two_phase_simplex)
     importlib.reload(transportation_model)
+    importlib.reload(dijkstra_algorithm)
+    importlib.reload(kruskal_algorithm)
 
 # Crear instancia de la aplicación Flask
 app = Flask(__name__)
@@ -419,6 +423,91 @@ def examples():
                 'supply': [100, 100],
                 'demand': [60, 70, 50, 60]
             }
+        },
+        
+        # Ejemplos para Dijkstra
+        {
+            'title': 'Dijkstra - Red de Carreteras',
+            'method': 'dijkstra',
+            'description': 'Encuentra la ruta más corta entre ciudades con distancias en kilómetros.',
+            'graph_type': 'No Dirigido',
+            'nodes': '6 ciudades',
+            'edges': '9 carreteras',
+            'icon': 'road',
+            'data': {
+                'edges': '1 2 7\n1 3 9\n1 6 14\n2 3 10\n2 4 15\n3 4 11\n3 6 2\n4 5 6\n5 6 9',
+                'start': 1,
+                'end': 5,
+                'directed': False
+            }
+        },
+        {
+            'title': 'Dijkstra - Red de Telecomunicaciones',
+            'method': 'dijkstra',
+            'description': 'Optimiza el enrutamiento de paquetes en una red con latencias (ms).',
+            'graph_type': 'Dirigido',
+            'nodes': '5 servidores',
+            'edges': '8 conexiones',
+            'icon': 'network-wired',
+            'data': {
+                'edges': '1 2 4\n1 3 2\n2 3 5\n2 4 10\n3 4 3\n3 5 8\n4 5 7\n5 2 1',
+                'start': 1,
+                'end': 5,
+                'directed': True
+            }
+        },
+        {
+            'title': 'Dijkstra - Rutas de Distribución',
+            'method': 'dijkstra',
+            'description': 'Calcula el tiempo mínimo de entrega entre centro de distribución y clientes (minutos).',
+            'graph_type': 'No Dirigido',
+            'nodes': '7 ubicaciones',
+            'edges': '11 rutas',
+            'icon': 'shipping-fast',
+            'data': {
+                'edges': '1 2 5\n1 3 3\n2 4 8\n2 5 6\n3 4 4\n3 5 7\n4 5 2\n4 6 9\n5 6 5\n5 7 10\n6 7 4',
+                'start': 1,
+                'end': 7,
+                'directed': False
+            }
+        },
+        
+        # Ejemplos para Kruskal
+        {
+            'title': 'Kruskal - Red Eléctrica',
+            'method': 'kruskal',
+            'description': 'Diseño óptimo de red eléctrica minimizando el costo de cableado (miles $).',
+            'graph_type': 'No Dirigido',
+            'nodes': '6 subestaciones',
+            'edges': '10 conexiones posibles',
+            'icon': 'bolt',
+            'data': {
+                'edges': '1 2 4\n1 3 2\n2 3 5\n2 4 10\n3 4 3\n3 5 8\n4 5 7\n4 6 6\n5 6 9\n2 5 12'
+            }
+        },
+        {
+            'title': 'Kruskal - Fibra Óptica',
+            'method': 'kruskal',
+            'description': 'Instalación de fibra óptica con el menor costo de tendido entre edificios (km).',
+            'graph_type': 'No Dirigido',
+            'nodes': '5 edificios',
+            'edges': '8 rutas posibles',
+            'icon': 'ethernet',
+            'data': {
+                'edges': '1 2 7\n1 3 9\n2 3 10\n2 4 15\n3 4 11\n3 5 2\n4 5 6\n1 5 14'
+            }
+        },
+        {
+            'title': 'Kruskal - Red de Tuberías',
+            'method': 'kruskal',
+            'description': 'Sistema de tuberías de agua optimizando el costo de instalación (metros).',
+            'graph_type': 'No Dirigido',
+            'nodes': '7 tanques',
+            'edges': '12 conexiones posibles',
+            'icon': 'water',
+            'data': {
+                'edges': '1 2 5\n1 3 3\n2 3 4\n2 4 8\n3 4 6\n3 5 7\n4 5 2\n4 6 9\n5 6 5\n5 7 10\n6 7 4\n1 7 15'
+            }
         }
     ]
     
@@ -498,6 +587,139 @@ def transportation_method():
     
     # GET request - mostrar formulario
     return render_template('transportation.html')
+
+
+@app.route('/dijkstra', methods=['GET', 'POST'])
+def dijkstra_method():
+    """Método de Dijkstra - Camino más corto"""
+    if request.method == 'POST':
+        try:
+            input_format = request.form.get('input_format', 'edges')
+            start_node = int(request.form.get('start_node'))
+            end_node_str = request.form.get('end_node', '').strip()
+            end_node = int(end_node_str) if end_node_str else None
+            directed = request.form.get('directed') == 'true'
+            
+            edges = []
+            
+            if input_format == 'edges':
+                # Parsear lista de aristas
+                edges_text = request.form.get('edges_text', '').strip()
+                if not edges_text:
+                    flash('Por favor ingresa las aristas del grafo.', 'danger')
+                    return redirect(url_for('dijkstra_method'))
+                
+                for line in edges_text.split('\n'):
+                    line = line.strip()
+                    if line and not line.startswith('#'):
+                        parts = line.split()
+                        if len(parts) >= 3:
+                            u, v, w = int(parts[0]), int(parts[1]), float(parts[2])
+                            edges.append((u, v, w))
+            
+            elif input_format == 'matrix':
+                # Parsear matriz de adyacencia
+                matrix_text = request.form.get('matrix_text', '').strip()
+                if not matrix_text:
+                    flash('Por favor ingresa la matriz de adyacencia.', 'danger')
+                    return redirect(url_for('dijkstra_method'))
+                
+                matrix = []
+                for line in matrix_text.split('\n'):
+                    line = line.strip()
+                    if line:
+                        row = [float(x) for x in line.split()]
+                        matrix.append(row)
+                
+                # Convertir matriz a lista de aristas
+                n = len(matrix)
+                for i in range(n):
+                    for j in range(n):
+                        if matrix[i][j] > 0:
+                            # Nodos numerados desde 1
+                            edges.append((i + 1, j + 1, matrix[i][j]))
+            
+            if not edges:
+                flash('No se encontraron aristas válidas en la entrada.', 'danger')
+                return redirect(url_for('dijkstra_method'))
+            
+            # Ejecutar Dijkstra
+            result = dijkstra_algorithm.solve_dijkstra(edges, start_node, end_node, directed)
+            
+            return render_template('dijkstra_results.html', result=result)
+            
+        except ValueError as e:
+            flash(f'Error en el formato de entrada: {str(e)}', 'danger')
+            return redirect(url_for('dijkstra_method'))
+        except Exception as e:
+            flash(f'Error al procesar el grafo: {str(e)}', 'danger')
+            return redirect(url_for('dijkstra_method'))
+    
+    return render_template('dijkstra.html')
+
+
+@app.route('/kruskal', methods=['GET', 'POST'])
+def kruskal_method():
+    """Método de Kruskal - Árbol de Expansión Mínima"""
+    if request.method == 'POST':
+        try:
+            input_format = request.form.get('input_format', 'edges')
+            edges = []
+            
+            if input_format == 'edges':
+                # Parsear lista de aristas
+                edges_text = request.form.get('edges_text', '').strip()
+                if not edges_text:
+                    flash('Por favor ingresa las aristas del grafo.', 'danger')
+                    return redirect(url_for('kruskal_method'))
+                
+                for line in edges_text.split('\n'):
+                    line = line.strip()
+                    if line and not line.startswith('#'):
+                        parts = line.split()
+                        if len(parts) >= 3:
+                            u, v, w = int(parts[0]), int(parts[1]), float(parts[2])
+                            edges.append((u, v, w))
+            
+            elif input_format == 'matrix':
+                # Parsear matriz de adyacencia
+                matrix_text = request.form.get('matrix_text', '').strip()
+                if not matrix_text:
+                    flash('Por favor ingresa la matriz de adyacencia.', 'danger')
+                    return redirect(url_for('kruskal_method'))
+                
+                matrix = []
+                for line in matrix_text.split('\n'):
+                    line = line.strip()
+                    if line:
+                        row = [float(x) for x in line.split()]
+                        matrix.append(row)
+                
+                # Convertir matriz a lista de aristas (evitar duplicados en grafo no dirigido)
+                n = len(matrix)
+                seen = set()
+                for i in range(n):
+                    for j in range(i + 1, n):  # Solo mitad superior para evitar duplicados
+                        if matrix[i][j] > 0:
+                            edges.append((i + 1, j + 1, matrix[i][j]))
+            
+            if not edges:
+                flash('No se encontraron aristas válidas en la entrada.', 'danger')
+                return redirect(url_for('kruskal_method'))
+            
+            # Ejecutar Kruskal
+            result = kruskal_algorithm.solve_kruskal(edges)
+            
+            return render_template('kruskal_results.html', result=result)
+            
+        except ValueError as e:
+            flash(f'Error en el formato de entrada: {str(e)}', 'danger')
+            return redirect(url_for('kruskal_method'))
+        except Exception as e:
+            flash(f'Error al procesar el grafo: {str(e)}', 'danger')
+            return redirect(url_for('kruskal_method'))
+    
+    return render_template('kruskal.html')
 
 
 # Manejo de errores

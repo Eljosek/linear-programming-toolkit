@@ -10,7 +10,7 @@
                 <i class="fas fa-calculator"></i>
                 Métodos de Programación Lineal
             </h1>
-            <p class="lead text-muted">Herramienta educativa con visualización paso a paso de tres métodos de optimización</p>
+            <p class="lead text-muted">Herramienta educativa con visualización paso a paso de siete métodos de optimización</p>
             <div class="alert alert-info mt-3 border-0 shadow-sm">
                 <i class="fas fa-graduation-cap"></i>
                 <strong>Desarrollado por José Miguel Herrera Gutiérrez</strong> para la profesora Bibiana Patricia Arias Villada
@@ -62,7 +62,7 @@
                     Métodos de Resolución Implementados
                 </h2>
                 <p class="text-center text-muted mb-4">
-                    Esta aplicación implementa tres algoritmos con visualización paso a paso para propósitos educativos
+                    Esta aplicación implementa siete algoritmos con visualización paso a paso para propósitos educativos
                 </p>
             </div>
             
@@ -141,6 +141,60 @@
                     </div>
                     <div class="card-footer bg-transparent text-center">
                         <a href="{{ url_for('dual_simplex') }}" class="btn btn-info">
+                            <i class="fas fa-arrow-right"></i> Usar Método
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Algoritmo Dijkstra -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow" style="border-left: 5px solid #14b8a6;">
+                    <div class="card-header text-white text-center" style="background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);">
+                        <i class="fas fa-route fa-3x mb-2"></i>
+                        <h4 class="mb-0">Dijkstra</h4>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>🛣️ Especialidad:</strong> Camino más corto en grafos</p>
+                        <p><strong>🎯 Características:</strong></p>
+                        <ul class="small">
+                            <li>Algoritmo de camino mínimo</li>
+                            <li>Usa cola de prioridad (heap)</li>
+                            <li>Visualización interactiva con Vis.js</li>
+                            <li>Soporta grafos dirigidos/no dirigidos</li>
+                        </ul>
+                        <p class="small text-muted mt-3"><strong>✅ Ventajas:</strong> Eficiente O((V+E)log V), versátil</p>
+                        <p class="small text-muted"><strong>⚠️ Limitaciones:</strong> No funciona con pesos negativos</p>
+                    </div>
+                    <div class="card-footer bg-transparent text-center">
+                        <a href="{{ url_for('dijkstra_method') }}" class="btn btn-lg" style="background: #14b8a6; color: white;">
+                            <i class="fas fa-arrow-right"></i> Usar Método
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Algoritmo Kruskal -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow" style="border-left: 5px solid #10b981;">
+                    <div class="card-header text-white text-center" style="background: linear-gradient(135deg, #10b981 0%, #047857 100%);">
+                        <i class="fas fa-project-diagram fa-3x mb-2"></i>
+                        <h4 class="mb-0">Kruskal</h4>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>🌳 Especialidad:</strong> Árbol de expansión mínima</p>
+                        <p><strong>🎯 Características:</strong></p>
+                        <ul class="small">
+                            <li>Algoritmo MST (Minimum Spanning Tree)</li>
+                            <li>Usa estructura Union-Find</li>
+                            <li>Doble visualización con Vis.js</li>
+                            <li>Ordena aristas por peso</li>
+                        </ul>
+                        <p class="small text-muted mt-3"><strong>✅ Ventajas:</strong> O(E log E), conexión óptima</p>
+                        <p class="small text-muted"><strong>⚠️ Limitaciones:</strong> Solo grafos no dirigidos</p>
+                    </div>
+                    <div class="card-footer bg-transparent text-center">
+                        <a href="{{ url_for('kruskal_method') }}" class="btn btn-lg" style="background: #10b981; color: white;">
                             <i class="fas fa-arrow-right"></i> Usar Método
                         </a>
                     </div>
@@ -307,7 +361,149 @@
             </div>
         </div>
 
-                            </div>
+        <!-- Descripción Detallada: Algoritmo Dijkstra -->
+        <div class="card mb-4 shadow" style="border-left: 5px solid #14b8a6;">
+            <div class="card-header text-white" style="background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);">
+                <h3 class="mb-0">
+                    <i class="fas fa-route"></i>
+                    Algoritmo de Dijkstra en Detalle
+                </h3>
+            </div>
+            <div class="card-body">
+                <p class="lead">El algoritmo de Dijkstra encuentra el <strong>camino más corto</strong> desde un nodo origen a todos los demás nodos en un grafo con pesos no negativos. Desarrollado por Edsger W. Dijkstra en 1956.</p>
+                
+                <h5 class="mt-4"><i class="fas fa-lightbulb" style="color: #14b8a6;"></i> Fundamento:</h5>
+                <p>El algoritmo usa una <strong>estrategia greedy</strong> (voraz) que mantiene un conjunto de nodos visitados y actualiza iterativamente las distancias mínimas a los nodos no visitados, garantizando optimalidad cuando todos los pesos son no negativos.</p>
+                
+                <h5 class="mt-4"><i class="fas fa-list-ol" style="color: #14b8a6;"></i> Procedimiento:</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ol>
+                            <li><strong>Inicialización:</strong> Distancia al origen = 0, resto = ∞</li>
+                            <li><strong>Cola de prioridad:</strong> Usar heap para extraer nodo con distancia mínima</li>
+                            <li><strong>Relajación:</strong> Actualizar distancias a vecinos no visitados</li>
+                        </ol>
+                    </div>
+                    <div class="col-md-6">
+                        <ol start="4">
+                            <li><strong>Marcar visitado:</strong> El nodo actual no se revisará de nuevo</li>
+                            <li><strong>Repetir:</strong> Hasta visitar todos los nodos alcanzables</li>
+                            <li><strong>Reconstruir camino:</strong> Usar predecesores para obtener ruta óptima</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="alert" style="background-color: #ccfbf1; border-left: 4px solid #14b8a6;">
+                    <i class="fas fa-chart-line" style="color: #0f766e;"></i>
+                    <strong>Complejidad:</strong> O((V + E) log V) usando heap binario, donde V = vértices y E = aristas
+                </div>
+                
+                <h5 class="mt-4"><i class="fas fa-desktop" style="color: #14b8a6;"></i> Visualización Interactiva:</h5>
+                <p>Esta aplicación utiliza <strong>Vis.js</strong> para mostrar el grafo de manera interactiva:</p>
+                <ul>
+                    <li>Nodos arrastrables y ajustables</li>
+                    <li>Camino óptimo resaltado en azul y verde</li>
+                    <li>Tabla de distancias a todos los nodos</li>
+                    <li>Iteraciones detalladas mostrando nodos visitados/no visitados</li>
+                </ul>
+                
+                <h5 class="mt-4"><i class="fas fa-industry" style="color: #0f766e;"></i> Aplicaciones Reales:</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul>
+                            <li><strong>GPS y navegación:</strong> Rutas óptimas en mapas</li>
+                            <li><strong>Redes de telecomunicaciones:</strong> Enrutamiento de paquetes</li>
+                            <li><strong>Logística:</strong> Rutas de distribución óptimas</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul>
+                            <li><strong>Juegos:</strong> Pathfinding para personajes</li>
+                            <li><strong>Redes sociales:</strong> Grados de separación</li>
+                            <li><strong>Planificación urbana:</strong> Diseño de rutas de transporte</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Descripción Detallada: Algoritmo Kruskal -->
+        <div class="card mb-5 shadow" style="border-left: 5px solid #10b981;">
+            <div class="card-header text-white" style="background: linear-gradient(135deg, #10b981 0%, #047857 100%);">
+                <h3 class="mb-0">
+                    <i class="fas fa-project-diagram"></i>
+                    Algoritmo de Kruskal en Detalle
+                </h3>
+            </div>
+            <div class="card-body">
+                <p class="lead">El algoritmo de Kruskal encuentra el <strong>Árbol de Expansión Mínima (MST)</strong> de un grafo conexo no dirigido, conectando todos los nodos con el menor costo total sin formar ciclos. Desarrollado por Joseph Kruskal en 1956.</p>
+                
+                <h5 class="mt-4"><i class="fas fa-tree" style="color: #10b981;"></i> Concepto de MST:</h5>
+                <p>Un <strong>Minimum Spanning Tree</strong> es un subgrafo que:</p>
+                <ul>
+                    <li>Conecta todos los vértices del grafo original</li>
+                    <li>Es un árbol (sin ciclos, con V-1 aristas)</li>
+                    <li>Tiene la suma mínima de pesos de aristas</li>
+                    <li>Es único si todos los pesos son diferentes</li>
+                </ul>
+                
+                <h5 class="mt-4"><i class="fas fa-list-ol" style="color: #10b981;"></i> Procedimiento:</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ol>
+                            <li><strong>Ordenar aristas:</strong> Por peso ascendente</li>
+                            <li><strong>Inicializar Union-Find:</strong> Cada nodo en su propio conjunto</li>
+                            <li><strong>Iterar aristas:</strong> En orden de peso</li>
+                        </ol>
+                    </div>
+                    <div class="col-md-6">
+                        <ol start="4">
+                            <li><strong>Verificar ciclo:</strong> ¿Los extremos están en el mismo conjunto?</li>
+                            <li><strong>Agregar arista:</strong> Si no forma ciclo, incluir en MST y unir conjuntos</li>
+                            <li><strong>Terminar:</strong> Al tener V-1 aristas</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="alert" style="background-color: #d1fae5; border-left: 4px solid #10b981;">
+                    <i class="fas fa-chart-line" style="color: #047857;"></i>
+                    <strong>Complejidad:</strong> O(E log E) donde E = número de aristas (dominado por ordenamiento)
+                </div>
+                
+                <h5 class="mt-4"><i class="fas fa-sitemap" style="color: #10b981;"></i> Estructura Union-Find:</h5>
+                <p>También llamada <strong>Disjoint Set Union (DSU)</strong>, permite:</p>
+                <ul>
+                    <li><strong>Find:</strong> Determinar a qué conjunto pertenece un elemento (con compresión de ruta)</li>
+                    <li><strong>Union:</strong> Unir dos conjuntos (con unión por rango/tamaño)</li>
+                    <li><strong>Detección de ciclos:</strong> Si find(u) == find(v), la arista (u,v) forma ciclo</li>
+                    <li><strong>Eficiencia:</strong> Operaciones casi constantes O(α(n)) ≈ O(1) en la práctica</li>
+                </ul>
+                
+                <h5 class="mt-4"><i class="fas fa-desktop" style="color: #10b981;"></i> Doble Visualización:</h5>
+                <p>Esta aplicación muestra dos grafos con <strong>Vis.js</strong>:</p>
+                <ul>
+                    <li><strong>MST final:</strong> Solo aristas seleccionadas (verde) con peso total</li>
+                    <li><strong>Grafo original:</strong> Todas las aristas con indicación de pertenencia al MST</li>
+                    <li><strong>Tabla de iteraciones:</strong> Aristas aceptadas/rechazadas con razón</li>
+                    <li><strong>Aristas ordenadas:</strong> Vista completa con estado de selección</li>
+                </ul>
+                
+                <h5 class="mt-4"><i class="fas fa-bolt" style="color: #047857;"></i> Aplicaciones Reales:</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul>
+                            <li><strong>Redes eléctricas:</strong> Cableado con costo mínimo</li>
+                            <li><strong>Telecomunicaciones:</strong> Tendido de fibra óptica</li>
+                            <li><strong>Redes de tuberías:</strong> Distribución de agua/gas</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul>
+                            <li><strong>Diseño de circuitos:</strong> Conexiones PCB óptimas</li>
+                            <li><strong>Clustering:</strong> Análisis de datos y agrupamiento</li>
+                            <li><strong>Redes de transporte:</strong> Infraestructura vial mínima</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -913,6 +1109,12 @@ Sujeto a:
                 <a href="{{ url_for('transportation_method') }}" class="btn" style="background: #dc2626; color: white;">
                     <i class="fas fa-truck-moving"></i> Modelo de Transporte
                 </a>
+                <a href="{{ url_for('dijkstra_method') }}" class="btn" style="background: #14b8a6; color: white;">
+                    <i class="fas fa-route"></i> Dijkstra
+                </a>
+                <a href="{{ url_for('kruskal_method') }}" class="btn" style="background: #10b981; color: white;">
+                    <i class="fas fa-project-diagram"></i> Kruskal
+                </a>
             </div>
             <div class="btn-group d-none d-md-inline-flex" role="group">
                 <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
@@ -929,6 +1131,12 @@ Sujeto a:
                 </a>
                 <a href="{{ url_for('transportation_method') }}" class="btn btn-lg" style="background: #dc2626; color: white;">
                     <i class="fas fa-truck-moving"></i> Modelo de Transporte
+                </a>
+                <a href="{{ url_for('dijkstra_method') }}" class="btn btn-lg" style="background: #14b8a6; color: white;">
+                    <i class="fas fa-route"></i> Dijkstra
+                </a>
+                <a href="{{ url_for('kruskal_method') }}" class="btn btn-lg" style="background: #10b981; color: white;">
+                    <i class="fas fa-project-diagram"></i> Kruskal
                 </a>
             </div>
         </div>
@@ -981,6 +1189,7 @@ Sujeto a:
                             <span class="badge bg-info me-1">NumPy</span>
                             <span class="badge bg-warning text-dark me-1">Bootstrap 5</span>
                             <span class="badge bg-danger me-1">Matplotlib</span>
+                            <span class="badge" style="background: #14b8a6;">Vis.js 9.1.9</span>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -991,6 +1200,8 @@ Sujeto a:
                             <li><i class="fas fa-check text-success"></i> Dual Simplex con Ratios</li>
                             <li><i class="fas fa-check text-success"></i> Simplex Dos Fases con Artificiales</li>
                             <li><i class="fas fa-check text-success"></i> Modelo de Transporte (3 métodos)</li>
+                            <li><i class="fas fa-check text-success"></i> Dijkstra con Visualización Vis.js</li>
+                            <li><i class="fas fa-check text-success"></i> Kruskal MST con Union-Find</li>
                         </ul>
                     </div>
                 </div>

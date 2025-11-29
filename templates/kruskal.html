@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}Kruskal - Árbol de Expansión Mínima{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --kruskal-primary: #10b981;
+        --kruskal-secondary: #34d399;
+        --kruskal-light: #d1fae5;
+        --kruskal-dark: #047857;
+    }
+    
+    .kruskal-theme {
+        background: linear-gradient(135deg, var(--kruskal-primary) 0%, var(--kruskal-secondary) 100%);
+    }
+    
+    .badge-kruskal {
+        background: var(--kruskal-primary);
+        color: white;
+    }
+    
+    .btn-kruskal {
+        background: var(--kruskal-primary);
+        border-color: var(--kruskal-primary);
+        color: white;
+    }
+    
+    .btn-kruskal:hover {
+        background: var(--kruskal-dark);
+        border-color: var(--kruskal-dark);
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--kruskal-primary);
+        border-color: var(--kruskal-primary);
+    }
+    
+    .input-format-selector .btn-check:checked + .btn {
+        background-color: var(--kruskal-primary);
+        border-color: var(--kruskal-primary);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="kruskal-theme text-white py-4 mb-4">
+    <div class="container">
+        <h1 class="display-5 fw-bold mb-2">
+            <i class="fas fa-project-diagram me-3"></i>Algoritmo de Kruskal
+        </h1>
+        <p class="lead mb-0">Encuentra el árbol de expansión mínima (MST)</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row">
+        <!-- Formulario -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-lg">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0"><i class="fas fa-network-wired me-2" style="color: #10b981;"></i>Definir Grafo</h4>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('kruskal_method') }}" method="POST" id="kruskalForm">
+                        
+                        <!-- Selector de formato -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Formato de Entrada</label>
+                            <div class="btn-group w-100 input-format-selector" role="group">
+                                <input type="radio" class="btn-check" name="input_format" id="format_edges" value="edges" checked>
+                                <label class="btn btn-outline-secondary" for="format_edges">
+                                    <i class="fas fa-list me-2"></i>Lista de Aristas
+                                </label>
+                                
+                                <input type="radio" class="btn-check" name="input_format" id="format_matrix" value="matrix">
+                                <label class="btn btn-outline-secondary" for="format_matrix">
+                                    <i class="fas fa-table me-2"></i>Matriz de Adyacencia
+                                </label>
+                            </div>
+                            <small class="text-muted">Selecciona cómo deseas ingresar el grafo</small>
+                        </div>
+                        
+                        <!-- Input: Lista de Aristas -->
+                        <div id="edges_input" class="format-input">
+                            <div class="mb-3">
+                                <label for="edges_text" class="form-label fw-bold">
+                                    <i class="fas fa-list-ul me-2"></i>Aristas del Grafo
+                                </label>
+                                <textarea class="form-control font-monospace" id="edges_text" name="edges_text" 
+                                        rows="10" placeholder="Formato: nodo1 nodo2 peso&#10;Ejemplo:&#10;1 2 4&#10;1 3 2&#10;2 3 5&#10;2 4 10&#10;3 4 3&#10;4 5 7&#10;3 5 8"></textarea>
+                                <small class="text-muted">Cada línea: nodo1 nodo2 peso (grafo no dirigido)</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Input: Matriz de Adyacencia -->
+                        <div id="matrix_input" class="format-input" style="display: none;">
+                            <div class="mb-3">
+                                <label for="matrix_text" class="form-label fw-bold">
+                                    <i class="fas fa-table me-2"></i>Matriz de Adyacencia
+                                </label>
+                                <textarea class="form-control font-monospace" id="matrix_text" name="matrix_text" 
+                                        rows="10" placeholder="Formato: matriz cuadrada n×n (simétrica)&#10;Ejemplo (0 = sin conexión):&#10;0 4 2 0 0&#10;4 0 5 10 0&#10;2 5 0 3 8&#10;0 10 3 0 7&#10;0 0 8 7 0"></textarea>
+                                <small class="text-muted">Matriz simétrica, 0 = sin conexión, nodos numerados desde 1</small>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Nota:</strong> El algoritmo de Kruskal trabaja con grafos <strong>no dirigidos</strong>. 
+                            Las aristas se consideran bidireccionales automáticamente.
+                        </div>
+                        
+                        <!-- Botones -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-kruskal btn-lg">
+                                <i class="fas fa-play me-2"></i>Ejecutar Kruskal
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="location.href='{{ url_for('examples') }}'">
+                                <i class="fas fa-lightbulb me-2"></i>Ver Ejemplos
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Información -->
+        <div class="col-lg-6">
+            <div class="card shadow-lg mb-4">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0"><i class="fas fa-info-circle me-2" style="color: #10b981;"></i>Sobre el Algoritmo</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="text-dark">¿Qué es Kruskal?</h5>
+                    <p>El algoritmo de Kruskal encuentra el <strong>Árbol de Expansión Mínima (MST)</strong> de un grafo conexo no dirigido: un subconjunto de aristas que conecta todos los nodos con el <strong>menor peso total posible</strong>, sin formar ciclos.</p>
+                    
+                    <h5 class="text-dark mt-3">Características</h5>
+                    <ul>
+                        <li>Complejidad: <code>O(E log E)</code> o <code>O(E log V)</code></li>
+                        <li>Usa estructura <strong>Union-Find</strong></li>
+                        <li>Ordena aristas por peso <strong>ascendente</strong></li>
+                        <li>Agrega aristas que no forman ciclos</li>
+                        <li>Requiere <strong>V - 1</strong> aristas (V = nodos)</li>
+                    </ul>
+                    
+                    <h5 class="text-dark mt-3">Aplicaciones</h5>
+                    <ul>
+                        <li><i class="fas fa-bolt me-2"></i>Diseño de redes eléctricas</li>
+                        <li><i class="fas fa-wifi me-2"></i>Redes de telecomunicaciones</li>
+                        <li><i class="fas fa-water me-2"></i>Sistemas de tuberías y alcantarillado</li>
+                        <li><i class="fas fa-road me-2"></i>Planificación de carreteras</li>
+                        <li><i class="fas fa-ethernet me-2"></i>Cables de fibra óptica</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card shadow-lg">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0"><i class="fas fa-question-circle me-2" style="color: #10b981;"></i>Cómo Usar</h4>
+                </div>
+                <div class="card-body">
+                    <h6 class="fw-bold">Formato de Lista de Aristas:</h6>
+                    <pre class="bg-light p-3 rounded"><code>1 2 4    # Arista entre nodo 1 y 2 con peso 4
+1 3 2    # Arista entre nodo 1 y 3 con peso 2
+2 3 5
+2 4 10
+3 4 3</code></pre>
+                    
+                    <h6 class="fw-bold mt-3">Formato de Matriz (Simétrica):</h6>
+                    <pre class="bg-light p-3 rounded"><code>0 4 2    # Fila 1: nodo 1 conectado a 2(peso 4) y 3(peso 2)
+4 0 5    # Fila 2: nodo 2 conectado a 1(peso 4) y 3(peso 5)
+2 5 0    # Fila 3: conexiones simétricas</code></pre>
+                    
+                    <div class="alert alert-warning mt-3 mb-0">
+                        <strong><i class="fas fa-exclamation-triangle me-2"></i>Importante:</strong>
+                        <ul class="mb-0">
+                            <li>El grafo debe ser <strong>conexo</strong> (todos los nodos alcanzables)</li>
+                            <li>Si el grafo no es conexo, el algoritmo detectará el error</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Cambiar entre formato de aristas y matriz
+    const formatEdges = document.getElementById('format_edges');
+    const formatMatrix = document.getElementById('format_matrix');
+    const edgesInput = document.getElementById('edges_input');
+    const matrixInput = document.getElementById('matrix_input');
+    
+    formatEdges.addEventListener('change', function() {
+        if (this.checked) {
+            edgesInput.style.display = 'block';
+            matrixInput.style.display = 'none';
+            document.getElementById('edges_text').required = true;
+            document.getElementById('matrix_text').required = false;
+        }
+    });
+    
+    formatMatrix.addEventListener('change', function() {
+        if (this.checked) {
+            edgesInput.style.display = 'none';
+            matrixInput.style.display = 'block';
+            document.getElementById('edges_text').required = false;
+            document.getElementById('matrix_text').required = true;
+        }
+    });
+    
+    // Cargar ejemplo desde localStorage
+    window.addEventListener('load', function() {
+        const exampleEdges = localStorage.getItem('example_kruskal_edges');
+        
+        if (exampleEdges) {
+            document.getElementById('edges_text').value = exampleEdges;
+            
+            // Limpiar localStorage
+            localStorage.removeItem('example_kruskal_edges');
+        }
+    });
+</script>
+{% endblock %}

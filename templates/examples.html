@@ -2,6 +2,31 @@
 
 {% block title %}Ejemplos - Programación Lineal{% endblock %}
 
+{% block extra_css %}
+<style>
+    .btn-dijkstra {
+        background: #14b8a6;
+        border-color: #14b8a6;
+        color: white;
+    }
+    .btn-dijkstra:hover {
+        background: #0f766e;
+        border-color: #0f766e;
+        color: white;
+    }
+    .btn-kruskal {
+        background: #10b981;
+        border-color: #10b981;
+        color: white;
+    }
+    .btn-kruskal:hover {
+        background: #047857;
+        border-color: #047857;
+        color: white;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row">
     <div class="col-12">
@@ -273,6 +298,95 @@
             {% endfor %}
         </div>
         
+        <!-- Ejemplos de Dijkstra -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2 class="mb-3" style="color: #14b8a6;">
+                    <i class="fas fa-route"></i>
+                    Dijkstra - Camino Más Corto
+                </h2>
+            </div>
+            {% for example in examples %}
+                {% if example.method == 'dijkstra' %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow">
+                        <div class="card-header text-white" style="background: linear-gradient(135deg, #14b8a6 0%, #2dd4bf 100%);">
+                            <h5 class="mb-0">
+                                <i class="fas fa-{{ example.icon }}"></i>
+                                {{ example.title }}
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">{{ example.description }}</p>
+                            
+                            <div class="row">
+                                <div class="col-12 mb-2">
+                                    <h6><strong>Tipo de Grafo:</strong> {{ example.graph_type }}</h6>
+                                    <h6><strong>Nodos:</strong> {{ example.nodes }}</h6>
+                                    <h6><strong>Aristas:</strong> {{ example.edges }}</h6>
+                                </div>
+                                
+                                <div class="col-12 mb-2">
+                                    <h6><strong>Origen:</strong> Nodo {{ example.data.start }}</h6>
+                                    <h6><strong>Destino:</strong> Nodo {{ example.data.end }}</h6>
+                                </div>
+                                
+                                <div class="col-12 text-center">
+                                    <button onclick="loadDijkstraExample('{{ example.data.edges }}', {{ example.data.start }}, {{ example.data.end }}, {{ example.data.directed | tojson }})" class="btn btn-dijkstra">
+                                        <i class="fas fa-play"></i>
+                                        Resolver con Dijkstra
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        
+        <!-- Ejemplos de Kruskal -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2 class="mb-3" style="color: #10b981;">
+                    <i class="fas fa-project-diagram"></i>
+                    Kruskal - Árbol de Expansión Mínima
+                </h2>
+            </div>
+            {% for example in examples %}
+                {% if example.method == 'kruskal' %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow">
+                        <div class="card-header text-white" style="background: linear-gradient(135deg, #10b981 0%, #34d399 100%);">
+                            <h5 class="mb-0">
+                                <i class="fas fa-{{ example.icon }}"></i>
+                                {{ example.title }}
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">{{ example.description }}</p>
+                            
+                            <div class="row">
+                                <div class="col-12 mb-2">
+                                    <h6><strong>Tipo de Grafo:</strong> {{ example.graph_type }}</h6>
+                                    <h6><strong>Nodos:</strong> {{ example.nodes }}</h6>
+                                    <h6><strong>Aristas Posibles:</strong> {{ example.edges }}</h6>
+                                </div>
+                                
+                                <div class="col-12 text-center">
+                                    <button onclick="loadKruskalExample('{{ example.data.edges }}')" class="btn btn-kruskal">
+                                        <i class="fas fa-play"></i>
+                                        Resolver con Kruskal
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        
         <div class="text-center mt-4">
             <div class="row">
                 <div class="col-md-3 mb-2">
@@ -360,6 +474,25 @@ function loadTransportExample(costs, supply, demand) {
     
     // Redirigir
     window.location.href = "{{ url_for('transportation_method') }}";
+}
+
+function loadDijkstraExample(edges, start, end, directed) {
+    // Guardar en localStorage
+    localStorage.setItem('example_dijkstra_edges', edges);
+    localStorage.setItem('example_dijkstra_start', start);
+    localStorage.setItem('example_dijkstra_end', end);
+    localStorage.setItem('example_dijkstra_directed', directed);
+    
+    // Redirigir
+    window.location.href = "{{ url_for('dijkstra_method') }}";
+}
+
+function loadKruskalExample(edges) {
+    // Guardar en localStorage
+    localStorage.setItem('example_kruskal_edges', edges);
+    
+    // Redirigir
+    window.location.href = "{{ url_for('kruskal_method') }}";
 }
 </script>
 {% endblock %}

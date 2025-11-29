@@ -13,7 +13,7 @@
 
 **Desarrollado por:** José Miguel Herrera Gutiérrez  
 **Profesora:** Bibiana Patricia Arias Villada  
-**Versión:** 5.0 (Final)  
+**Versión:** 6.0 (Final)  
 **Fecha:** Noviembre 2025
 
 </div>
@@ -22,26 +22,29 @@
 
 ## 📋 Descripción
 
-Aplicación web educativa completa para resolver problemas de **Programación Lineal** con **5 métodos diferentes**, cada uno con visualización paso a paso de iteraciones y tableaux completos. Proyecto final del segundo parcial de Investigación de Operaciones.
+Aplicación web educativa completa para resolver problemas de **Programación Lineal** con **7 métodos diferentes**, incluyendo algoritmos de redes con visualización interactiva. Cada método incluye visualización paso a paso de iteraciones y tableaux completos. Proyecto final del segundo parcial de Investigación de Operaciones.
 
 ## ✨ Características Principales
 
 ### 🔢 Métodos Implementados
 
 | Método | Variables | Restricciones | Características |
-|--------|-----------|---------------|-----------------|
+|--------|-----------|---------------|---------------|
 | 🟢 **Método Gráfico** | 2 | ≤, ≥ | Visualización con Matplotlib, región factible |
 | 🟡 **Simplex Estándar** | 2+ | ≤ | Tableau manual, variables de holgura |
 | 🟣 **Dual Simplex** | 2+ | ≥ | Ratios duales, minimización/maximización |
 | 🟠 **Simplex Dos Fases** | 2+ | ≤, ≥, = | Variables artificiales, Fase I y II |
 | 🔴 **Modelo de Transporte** | n×m | Balance | Esquina Noroeste, Costo Mínimo, Vogel (VAM) |
+| 🔵 **Dijkstra** | Grafos | Pesos ≥ 0 | Camino más corto, visualización Vis.js |
+| 🟢 **Kruskal** | Grafos | No dirigido | Árbol de expansión mínima (MST), Union-Find |
 
 ### 🎨 Interfaz Moderna
 
 - ✅ **Diseño responsivo** con Bootstrap 5 y CSS personalizado
-- ✅ **Colores distintivos** por método (Verde, Amarillo, Morado, Naranja, Rojo)
+- ✅ **Colores distintivos** por método (Verde, Amarillo, Morado, Naranja, Rojo, Teal, Emerald)
 - ✅ **Animaciones suaves** y transiciones fluidas
 - ✅ **Iconos Font Awesome** para mejor UX
+- ✅ **Visualización interactiva de grafos** con Vis.js 9.1.9
 - ✅ **Modo oscuro** disponible en toda la aplicación
 
 ### 📊 Visualización Educativa
@@ -51,10 +54,11 @@ Aplicación web educativa completa para resolver problemas de **Programación Li
 - ✅ **Variables básicas** identificadas en cada iteración
 - ✅ **Valores de Z/W** actualizados paso a paso
 - ✅ **Acordeones expandibles** para navegación fácil
+- ✅ **Grafos interactivos** con nodos arrastrables y caminos resaltados
 
 ### 🎯 Funcionalidades
 
-- ✅ **Cinco métodos de solución** con algoritmos optimizados
+- ✅ **Siete métodos de solución** con algoritmos optimizados
 - ✅ **Visualización paso a paso** de iteraciones
 - ✅ **Tablas interactivas** con resaltado de pivotes
 - ✅ **Soporte para restricciones** `<=`, `>=`, `=`
@@ -86,6 +90,7 @@ Aplicación web educativa completa para resolver problemas de **Programación Li
 - **JavaScript ES6+**
 - **Bootstrap 5.3** - Framework CSS
 - **Font Awesome 6.6** - Iconos
+- **Vis.js 9.1.9** - Visualización interactiva de grafos
 
 ---
 
@@ -99,6 +104,8 @@ Investigacion-de-operaciones/
 ├── dual_simplex_tableau.py         # 🔄 Método Dual Simplex (NumPy)
 ├── two_phase_simplex.py            # 🔶 Método Simplex Dos Fases
 ├── transportation_model.py         # 🟣 Modelo de Transporte (3 métodos)
+├── dijkstra_algorithm.py           # 🔵 Algoritmo Dijkstra (camino más corto)
+├── kruskal_algorithm.py            # 🟢 Algoritmo Kruskal (MST)
 ├── requirements.txt                # 📦 Dependencias
 ├── README.md                       # 📖 Este archivo
 │
@@ -124,7 +131,11 @@ Investigacion-de-operaciones/
     ├── two_phase_simplex_results.html  # 📊 Resultados Dos Fases
     ├── transportation.html         # 📝 Formulario Transporte
     ├── transportation_results.html # 📊 Resultados Transporte
-    └── transportation_method_details.html  # 📋 Detalles de método
+    ├── transportation_method_details.html  # 📋 Detalles de método
+    ├── dijkstra.html               # 📝 Formulario Dijkstra
+    ├── dijkstra_results.html       # 📊 Resultados Dijkstra (Vis.js)
+    ├── kruskal.html                # 📝 Formulario Kruskal
+    └── kruskal_results.html        # 📊 Resultados Kruskal (Vis.js)
 ```
 
 ---

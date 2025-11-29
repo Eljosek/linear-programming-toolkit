@@ -1,0 +1,424 @@
+{% extends "base.html" %}
+
+{% block title %}Resultados - Dijkstra{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.9/dist/dist/vis-network.min.css">
+<style>
+    :root {
+        --dijkstra-primary: #14b8a6;
+        --dijkstra-secondary: #2dd4bf;
+        --dijkstra-light: #ccfbf1;
+        --dijkstra-dark: #0f766e;
+    }
+    
+    .dijkstra-theme {
+        background: linear-gradient(135deg, var(--dijkstra-primary) 0%, var(--dijkstra-secondary) 100%);
+    }
+    
+    .badge-dijkstra {
+        background: var(--dijkstra-primary);
+        color: white;
+    }
+    
+    #graphContainer {
+        width: 100%;
+        height: 500px;
+        border: 2px solid var(--dijkstra-light);
+        border-radius: 10px;
+        background: #f8f9fa;
+    }
+    
+    .iteration-table th {
+        background: var(--dijkstra-light);
+        color: var(--dijkstra-dark);
+        font-weight: 600;
+    }
+    
+    .current-node {
+        background-color: #fef3c7 !important;
+        font-weight: bold;
+    }
+    
+    .visited-node {
+        background-color: #d1fae5 !important;
+    }
+    
+    .path-highlight {
+        background-color: #bfdbfe !important;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="dijkstra-theme text-white py-4 mb-4">
+    <div class="container">
+        <h1 class="display-5 fw-bold mb-2">
+            <i class="fas fa-check-circle me-3"></i>Resultados - Dijkstra
+        </h1>
+        <p class="lead mb-0">Camino más corto encontrado</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    {% if result.success %}
+        
+        <!-- Resultado Principal -->
+        <div class="alert alert-success mb-4">
+            <h4 class="mb-3"><i class="fas fa-route me-2"></i>Camino Más Corto</h4>
+            {% if result.end %}
+                <p class="mb-2">
+                    <strong>Desde:</strong> Nodo {{ result.start }} 
+                    <i class="fas fa-arrow-right mx-2"></i> 
+                    <strong>Hasta:</strong> Nodo {{ result.end }}
+                </p>
+                <p class="mb-2">
+                    <strong>Distancia Total:</strong> 
+                    <span class="badge bg-primary fs-5">{{ result.distance }}</span>
+                </p>
+                <p class="mb-0">
+                    <strong>Camino:</strong> 
+                    {% for node in result.path %}
+                        <span class="badge badge-dijkstra">{{ node }}</span>
+                        {% if not loop.last %}
+                            <i class="fas fa-arrow-right mx-1"></i>
+                        {% endif %}
+                    {% endfor %}
+                </p>
+            {% else %}
+                <p class="mb-0">
+                    <strong>Desde:</strong> Nodo {{ result.start }} 
+                    <i class="fas fa-arrow-right mx-2"></i> 
+                    <strong>A todos los nodos</strong>
+                </p>
+            {% endif %}
+            <p class="mb-0 mt-2">
+                <strong>Tipo de Grafo:</strong> 
+                <span class="badge bg-secondary">{{ 'Dirigido' if result.directed else 'No Dirigido' }}</span>
+            </p>
+        </div>
+        
+        <!-- Visualización del Grafo -->
+        <div class="card shadow-lg mb-4">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-project-diagram me-2" style="color: #14b8a6;"></i>
+                    Visualización Interactiva del Grafo
+                </h4>
+            </div>
+            <div class="card-body">
+                <div id="graphContainer"></div>
+                <div class="mt-3">
+                    <span class="badge bg-success me-2">
+                        <i class="fas fa-circle me-1"></i>Nodos en el camino
+                    </span>
+                    <span class="badge bg-primary me-2">
+                        <i class="fas fa-minus me-1"></i>Aristas en el camino
+                    </span>
+                    <span class="badge bg-secondary">
+                        <i class="fas fa-circle me-1"></i>Otros nodos/aristas
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        {% if result.end %}
+            <!-- Distancias a Todos los Nodos -->
+            <div class="card shadow-lg mb-4">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-table me-2" style="color: #14b8a6;"></i>
+                        Distancias desde Nodo {{ result.start }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nodo Destino</th>
+                                    <th>Distancia Mínima</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for node, distance in result.all_distances.items() %}
+                                <tr {% if node == result.end %}class="path-highlight"{% endif %}>
+                                    <td><strong>Nodo {{ node }}</strong></td>
+                                    <td>
+                                        {% if distance == 'INF' %}
+                                            <span class="badge bg-danger">∞ (No alcanzable)</span>
+                                        {% else %}
+                                            <span class="badge bg-success">{{ distance }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if node == result.start %}
+                                            <span class="badge bg-primary">Origen</span>
+                                        {% elif node == result.end %}
+                                            <span class="badge bg-warning">Destino</span>
+                                        {% elif node in result.path %}
+                                            <span class="badge badge-dijkstra">En el camino</span>
+                                        {% elif distance == 'INF' %}
+                                            <span class="badge bg-secondary">Desconectado</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Alcanzable</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <!-- Todos los Caminos -->
+            <div class="card shadow-lg mb-4">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-map me-2" style="color: #14b8a6;"></i>
+                        Todos los Caminos desde Nodo {{ result.start }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nodo Destino</th>
+                                    <th>Distancia</th>
+                                    <th>Camino</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for node, distance in result.distances.items() %}
+                                {% if node != result.start %}
+                                <tr>
+                                    <td><strong>Nodo {{ node }}</strong></td>
+                                    <td>
+                                        {% if distance == 'INF' %}
+                                            <span class="badge bg-danger">∞</span>
+                                        {% else %}
+                                            <span class="badge bg-success">{{ distance }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if node in result.paths %}
+                                            {% for n in result.paths[node] %}
+                                                <span class="badge badge-dijkstra">{{ n }}</span>
+                                                {% if not loop.last %}
+                                                    <i class="fas fa-arrow-right mx-1"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="text-muted">No hay camino</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Iteraciones del Algoritmo -->
+        <div class="card shadow-lg mb-4">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-list-ol me-2" style="color: #14b8a6;"></i>
+                    Iteraciones del Algoritmo
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="accordion" id="iterationsAccordion">
+                    {% for iter in result.iterations %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button {% if loop.index > 1 %}collapsed{% endif %}" 
+                                    type="button" data-bs-toggle="collapse" 
+                                    data-bs-target="#iteration{{ loop.index }}">
+                                <strong>Iteración {{ iter.iteration }}</strong>: 
+                                Procesando Nodo {{ iter.current_node }} 
+                                (Distancia: {{ iter.current_distance }})
+                            </button>
+                        </h2>
+                        <div id="iteration{{ loop.index }}" 
+                             class="accordion-collapse collapse {% if loop.index == 1 %}show{% endif %}" 
+                             data-bs-parent="#iterationsAccordion">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold">Nodos Visitados:</h6>
+                                        <p>
+                                            {% for node in iter.visited %}
+                                                <span class="badge bg-success">{{ node }}</span>
+                                            {% endfor %}
+                                        </p>
+                                        
+                                        <h6 class="fw-bold mt-3">Nodos No Visitados:</h6>
+                                        <p>
+                                            {% for node in iter.unvisited %}
+                                                <span class="badge bg-secondary">{{ node }}</span>
+                                            {% endfor %}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold">Distancias Actuales:</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Nodo</th>
+                                                        <th>Distancia</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for node, dist in iter.distances.items() %}
+                                                    <tr {% if node == iter.current_node %}class="current-node"{% endif %}>
+                                                        <td>{{ node }}</td>
+                                                        <td>{{ dist }}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Botones de Acción -->
+        <div class="text-center">
+            <button onclick="window.print()" class="btn btn-outline-secondary btn-lg me-2">
+                <i class="fas fa-print me-2"></i>Imprimir
+            </button>
+            <a href="{{ url_for('dijkstra_method') }}" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-redo me-2"></i>Nuevo Problema
+            </a>
+        </div>
+        
+    {% else %}
+        <!-- Error -->
+        <div class="alert alert-danger">
+            <h4><i class="fas fa-exclamation-triangle me-2"></i>Error</h4>
+            <p class="mb-0">{{ result.error }}</p>
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('dijkstra_method') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-arrow-left me-2"></i>Volver
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.9/dist/vis-network.min.js"></script>
+<script>
+    {% if result.success %}
+    // Datos del grafo
+    const graphData = {{ result.graph_data | tojson }};
+    
+    // Configurar nodos
+    const nodes = new vis.DataSet(graphData.nodes.map(node => ({
+        id: node.id,
+        label: node.label,
+        {% if result.end %}
+            color: {{ result.path | tojson }}.includes(node.id) ? '#10b981' : '#94a3b8',
+            font: { color: 'white', size: 16, bold: {{ result.path | tojson }}.includes(node.id) }
+        {% else %}
+            color: node.id === {{ result.start }} ? '#14b8a6' : '#94a3b8',
+            font: { color: 'white', size: 16, bold: node.id === {{ result.start }} }
+        {% endif %}
+    })));
+    
+    // Configurar aristas
+    {% if result.end and result.path_edges %}
+    const pathEdges = {{ result.path_edges | tojson }};
+    const edges = new vis.DataSet(graphData.edges.map(edge => {
+        const isInPath = pathEdges.some(pe => 
+            (pe[0] === edge.from && pe[1] === edge.to) || 
+            (!{{ result.directed | tojson }} && pe[0] === edge.to && pe[1] === edge.from)
+        );
+        return {
+            from: edge.from,
+            to: edge.to,
+            label: edge.label,
+            color: isInPath ? { color: '#3b82f6', highlight: '#2563eb' } : { color: '#cbd5e1' },
+            width: isInPath ? 4 : 2,
+            arrows: {{ result.directed | tojson }} ? 'to' : '',
+            font: { size: 14, color: isInPath ? '#1e40af' : '#64748b', strokeWidth: 0 }
+        };
+    }));
+    {% else %}
+    const edges = new vis.DataSet(graphData.edges.map(edge => ({
+        from: edge.from,
+        to: edge.to,
+        label: edge.label,
+        color: { color: '#cbd5e1' },
+        width: 2,
+        arrows: {{ result.directed | tojson }} ? 'to' : '',
+        font: { size: 14, color: '#64748b', strokeWidth: 0 }
+    })));
+    {% endif %}
+    
+    // Crear red
+    const container = document.getElementById('graphContainer');
+    const data = { nodes: nodes, edges: edges };
+    const options = {
+        nodes: {
+            shape: 'circle',
+            size: 30,
+            borderWidth: 2,
+            borderWidthSelected: 4,
+            shadow: true
+        },
+        edges: {
+            smooth: {
+                type: 'continuous',
+                roundness: 0.5
+            },
+            shadow: true
+        },
+        physics: {
+            enabled: true,
+            stabilization: {
+                iterations: 200
+            },
+            barnesHut: {
+                gravitationalConstant: -2000,
+                springLength: 150,
+                springConstant: 0.04
+            }
+        },
+        interaction: {
+            hover: true,
+            tooltipDelay: 200,
+            zoomView: true,
+            dragView: true
+        }
+    };
+    
+    const network = new vis.Network(container, data, options);
+    
+    // Fit automático después de estabilización
+    network.once('stabilizationIterationsDone', function() {
+        network.fit({
+            animation: {
+                duration: 1000,
+                easingFunction: 'easeInOutQuad'
+            }
+        });
+    });
+    {% endif %}
+</script>
+{% endblock %}
