@@ -332,7 +332,7 @@
                                 </div>
                                 
                                 <div class="col-12 text-center">
-                                    <button onclick="loadDijkstraExample('{{ example.data.edges }}', '{{ example.data.start }}', '{{ example.data.end }}', {{ example.data.directed | tojson }})" class="btn btn-dijkstra">
+                                    <button onclick="loadDijkstraExample({{ example.data.edges | tojson }}, {{ example.data.start | tojson }}, {{ example.data.end | tojson }}, {{ example.data.directed | tojson }})" class="btn btn-dijkstra">
                                         <i class="fas fa-play"></i>
                                         Resolver con Dijkstra
                                     </button>
@@ -374,7 +374,7 @@
                                 </div>
                                 
                                 <div class="col-12 text-center">
-                                    <button onclick="loadKruskalExample('{{ example.data.edges }}')" class="btn btn-kruskal">
+                                    <button onclick="loadKruskalExample({{ example.data.edges | tojson }})" class="btn btn-kruskal">
                                         <i class="fas fa-play"></i>
                                         Resolver con Kruskal
                                     </button>

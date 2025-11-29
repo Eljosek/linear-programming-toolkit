@@ -427,86 +427,86 @@ def examples():
         
         # Ejemplos para Dijkstra
         {
-            'title': 'Dijkstra - Red de Carreteras',
+            'title': 'Dijkstra - Red de Carreteras Simple',
             'method': 'dijkstra',
             'description': 'Encuentra la ruta más corta entre ciudades con distancias en kilómetros.',
             'graph_type': 'No Dirigido',
-            'nodes': '6 ciudades',
-            'edges': '9 carreteras',
+            'nodes': '5 ciudades',
+            'edges': '7 carreteras',
             'icon': 'road',
             'data': {
-                'edges': '1 2 7\n1 3 9\n1 6 14\n2 3 10\n2 4 15\n3 4 11\n3 6 2\n4 5 6\n5 6 9',
-                'start': 1,
-                'end': 5,
+                'edges': 'A B 4\nA C 2\nB C 1\nB D 5\nC D 8\nC E 10\nD E 2',
+                'start': 'A',
+                'end': 'E',
                 'directed': False
             }
         },
         {
-            'title': 'Dijkstra - Red de Telecomunicaciones',
+            'title': 'Dijkstra - Red Dirigida',
             'method': 'dijkstra',
-            'description': 'Optimiza el enrutamiento de paquetes en una red con latencias (ms).',
+            'description': 'Optimiza el enrutamiento en una red dirigida con costos.',
             'graph_type': 'Dirigido',
-            'nodes': '5 servidores',
-            'edges': '8 conexiones',
+            'nodes': '4 nodos',
+            'edges': '5 conexiones',
             'icon': 'network-wired',
             'data': {
-                'edges': '1 2 4\n1 3 2\n2 3 5\n2 4 10\n3 4 3\n3 5 8\n4 5 7\n5 2 1',
-                'start': 1,
-                'end': 5,
+                'edges': '1 2 5\n1 3 2\n2 4 1\n3 2 2\n3 4 6',
+                'start': '1',
+                'end': '4',
                 'directed': True
             }
         },
         {
-            'title': 'Dijkstra - Rutas de Distribución',
+            'title': 'Dijkstra - Rutas con Letras',
             'method': 'dijkstra',
-            'description': 'Calcula el tiempo mínimo de entrega entre centro de distribución y clientes (minutos).',
+            'description': 'Calcula el camino más corto usando nodos con nombres de letras.',
             'graph_type': 'No Dirigido',
-            'nodes': '7 ubicaciones',
-            'edges': '11 rutas',
+            'nodes': '6 nodos',
+            'edges': '8 rutas',
             'icon': 'shipping-fast',
             'data': {
-                'edges': '1 2 5\n1 3 3\n2 4 8\n2 5 6\n3 4 4\n3 5 7\n4 5 2\n4 6 9\n5 6 5\n5 7 10\n6 7 4',
-                'start': 1,
-                'end': 7,
+                'edges': 'A B 7\nA C 9\nB D 5\nC D 3\nC E 2\nD E 1\nD F 6\nE F 4',
+                'start': 'A',
+                'end': 'F',
                 'directed': False
             }
         },
         
         # Ejemplos para Kruskal
         {
-            'title': 'Kruskal - Red Eléctrica',
+            'title': 'Kruskal - Red Simple',
             'method': 'kruskal',
-            'description': 'Diseño óptimo de red eléctrica minimizando el costo de cableado (miles $).',
+            'description': 'Diseño óptimo de red minimizando el costo total.',
             'graph_type': 'No Dirigido',
-            'nodes': '6 subestaciones',
-            'edges': '10 conexiones posibles',
+            'nodes': '5 nodos',
+            'edges': '7 conexiones posibles',
             'icon': 'bolt',
             'data': {
-                'edges': '1 2 4\n1 3 2\n2 3 5\n2 4 10\n3 4 3\n3 5 8\n4 5 7\n4 6 6\n5 6 9\n2 5 12'
+                'edges': 'A B 4\nA C 2\nB C 5\nB D 10\nC D 3\nC E 8\nD E 7'
             }
         },
         {
-            'title': 'Kruskal - Fibra Óptica',
+            'title': 'Kruskal - Red con Números',
             'method': 'kruskal',
-            'description': 'Instalación de fibra óptica con el menor costo de tendido entre edificios (km).',
+            'description': 'MST con nodos numéricos y menor costo de conexión.',
             'graph_type': 'No Dirigido',
-            'nodes': '5 edificios',
-            'edges': '8 rutas posibles',
+            'nodes': '4 nodos',
+            'edges': '6 rutas posibles',
             'icon': 'ethernet',
             'data': {
-                'edges': '1 2 7\n1 3 9\n2 3 10\n2 4 15\n3 4 11\n3 5 2\n4 5 6\n1 5 14'
+                'edges': '1 2 7\n1 3 4\n2 3 10\n2 4 5\n3 4 3\n1 4 8'
             }
         },
         {
-            'title': 'Kruskal - Red de Tuberías',
+            'title': 'Kruskal - Red Mixta',
             'method': 'kruskal',
-            'description': 'Sistema de tuberías de agua optimizando el costo de instalación (metros).',
+            'description': 'MST con nodos alfanuméricos y optimización de costos.',
             'graph_type': 'No Dirigido',
-            'nodes': '7 tanques',
-            'edges': '12 conexiones posibles',
+            'nodes': '6 nodos',
+            'edges': '9 conexiones posibles',
             'icon': 'water',
             'data': {
-                'edges': '1 2 5\n1 3 3\n2 3 4\n2 4 8\n3 4 6\n3 5 7\n4 5 2\n4 6 9\n5 6 5\n5 7 10\n6 7 4\n1 7 15'
+                'edges': 'X Y 5\nX Z 3\nY Z 4\nY W 8\nZ W 6\nZ V 7\nW V 2\nW U 9\nV U 4'
             }
         }
     ]
