@@ -124,10 +124,10 @@ class DijkstraGraph:
             
             return {
                 'success': True,
-                'start': start,
-                'end': end,
+                'start': str(start),  # Convertir a string
+                'end': str(end),  # Convertir a string
                 'distance': round(distances[end], 2),
-                'path': path,
+                'path': [str(node) for node in path],  # Convertir todos a strings
                 'all_distances': {k: round(v, 2) if v != math.inf else 'INF' 
                                  for k, v in distances.items()},
                 'iterations': self.iterations,
@@ -140,11 +140,11 @@ class DijkstraGraph:
             paths = {}
             for node in self.nodes:
                 if node != start and distances[node] != math.inf:
-                    paths[node] = self._reconstruct_path(start, node, predecessors)
+                    paths[str(node)] = [str(n) for n in self._reconstruct_path(start, node, predecessors)]  # Convertir a strings
             
             return {
                 'success': True,
-                'start': start,
+                'start': str(start),  # Convertir a string
                 'end': None,
                 'distances': {k: round(v, 2) if v != math.inf else 'INF' 
                             for k, v in distances.items()},
