@@ -477,20 +477,31 @@ function loadTransportExample(costs, supply, demand) {
 }
 
 function loadDijkstraExample(edges, start, end, directed) {
+    console.log('loadDijkstraExample called');
+    console.log('edges:', edges);
+    console.log('start:', start);
+    console.log('end:', end);
+    console.log('directed:', directed);
+    
     // Guardar en localStorage
     localStorage.setItem('example_dijkstra_edges', edges);
     localStorage.setItem('example_dijkstra_start', start);
     localStorage.setItem('example_dijkstra_end', end);
     localStorage.setItem('example_dijkstra_directed', directed);
     
+    console.log('Redirecting to dijkstra...');
     // Redirigir
     window.location.href = "{{ url_for('dijkstra_method') }}";
 }
 
 function loadKruskalExample(edges) {
+    console.log('loadKruskalExample called');
+    console.log('edges:', edges);
+    
     // Guardar en localStorage
     localStorage.setItem('example_kruskal_edges', edges);
     
+    console.log('Redirecting to kruskal...');
     // Redirigir
     window.location.href = "{{ url_for('kruskal_method') }}";
 }
