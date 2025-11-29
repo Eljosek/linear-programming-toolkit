@@ -332,7 +332,11 @@
                                 </div>
                                 
                                 <div class="col-12 text-center">
-                                    <button onclick="loadDijkstraExample({{ example.data.edges | tojson }}, {{ example.data.start | tojson }}, {{ example.data.end | tojson }}, {{ example.data.directed | tojson }})" class="btn btn-dijkstra">
+                                    <button class="btn btn-dijkstra dijkstra-example-btn" 
+                                            data-edges="{{ example.data.edges }}" 
+                                            data-start="{{ example.data.start }}" 
+                                            data-end="{{ example.data.end }}" 
+                                            data-directed="{{ example.data.directed }}">
                                         <i class="fas fa-play"></i>
                                         Resolver con Dijkstra
                                     </button>
@@ -374,7 +378,8 @@
                                 </div>
                                 
                                 <div class="col-12 text-center">
-                                    <button onclick="loadKruskalExample({{ example.data.edges | tojson }})" class="btn btn-kruskal">
+                                    <button class="btn btn-kruskal kruskal-example-btn" 
+                                            data-edges="{{ example.data.edges }}">
                                         <i class="fas fa-play"></i>
                                         Resolver con Kruskal
                                     </button>
@@ -476,34 +481,48 @@ function loadTransportExample(costs, supply, demand) {
     window.location.href = "{{ url_for('transportation_method') }}";
 }
 
-function loadDijkstraExample(edges, start, end, directed) {
-    console.log('loadDijkstraExample called');
-    console.log('edges:', edges);
-    console.log('start:', start);
-    console.log('end:', end);
-    console.log('directed:', directed);
+// Event listeners para botones de Dijkstra
+document.addEventListener('DOMContentLoaded', function() {
+    // Dijkstra buttons
+    document.querySelectorAll('.dijkstra-example-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const edges = this.getAttribute('data-edges');
+            const start = this.getAttribute('data-start');
+            const end = this.getAttribute('data-end');
+            const directed = this.getAttribute('data-directed') === 'True';
+            
+            console.log('Loading Dijkstra example...');
+            console.log('edges:', edges);
+            console.log('start:', start);
+            console.log('end:', end);
+            console.log('directed:', directed);
+            
+            // Guardar en localStorage
+            localStorage.setItem('example_dijkstra_edges', edges);
+            localStorage.setItem('example_dijkstra_start', start);
+            localStorage.setItem('example_dijkstra_end', end);
+            localStorage.setItem('example_dijkstra_directed', directed);
+            
+            // Redirigir
+            window.location.href = "{{ url_for('dijkstra_method') }}";
+        });
+    });
     
-    // Guardar en localStorage
-    localStorage.setItem('example_dijkstra_edges', edges);
-    localStorage.setItem('example_dijkstra_start', start);
-    localStorage.setItem('example_dijkstra_end', end);
-    localStorage.setItem('example_dijkstra_directed', directed);
-    
-    console.log('Redirecting to dijkstra...');
-    // Redirigir
-    window.location.href = "{{ url_for('dijkstra_method') }}";
-}
-
-function loadKruskalExample(edges) {
-    console.log('loadKruskalExample called');
-    console.log('edges:', edges);
-    
-    // Guardar en localStorage
-    localStorage.setItem('example_kruskal_edges', edges);
-    
-    console.log('Redirecting to kruskal...');
-    // Redirigir
-    window.location.href = "{{ url_for('kruskal_method') }}";
-}
+    // Kruskal buttons
+    document.querySelectorAll('.kruskal-example-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const edges = this.getAttribute('data-edges');
+            
+            console.log('Loading Kruskal example...');
+            console.log('edges:', edges);
+            
+            // Guardar en localStorage
+            localStorage.setItem('example_kruskal_edges', edges);
+            
+            // Redirigir
+            window.location.href = "{{ url_for('kruskal_method') }}";
+        });
+    });
+});
 </script>
 {% endblock %}
