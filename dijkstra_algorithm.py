@@ -171,12 +171,12 @@ class DijkstraGraph:
         """Guarda el estado de una iteración"""
         self.iterations.append({
             'iteration': iteration,
-            'current_node': current,
+            'current_node': str(current),  # Convertir a string
             'current_distance': round(current_dist, 2) if current_dist != math.inf else 'INF',
             'distances': {k: round(v, 2) if v != math.inf else 'INF' 
                          for k, v in distances.items()},
-            'visited': sorted(list(visited)),
-            'unvisited': sorted(list(self.nodes - visited))
+            'visited': sorted([str(node) for node in visited], key=str),  # Convertir a strings
+            'unvisited': sorted([str(node) for node in (self.nodes - visited)], key=str)  # Convertir a strings
         })
     
     def _get_graph_data(self) -> Dict:

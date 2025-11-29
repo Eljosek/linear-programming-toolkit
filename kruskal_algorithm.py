@@ -69,7 +69,7 @@ class KruskalGraph:
             self.nodes.add(u)
             self.nodes.add(v)
         
-        self.nodes = sorted(list(self.nodes))
+        self.nodes = sorted(list(self.nodes), key=str)  # Usar key=str para ordenar letras y números correctamente
     
     def solve(self) -> Dict:
         """
