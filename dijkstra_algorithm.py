@@ -181,7 +181,8 @@ class DijkstraGraph:
     
     def _get_graph_data(self) -> Dict:
         """Prepara datos del grafo para visualización"""
-        nodes = [{'id': node, 'label': str(node)} for node in sorted(self.nodes)]
+        # Convertir nodos a strings para compatibilidad con Vis.js
+        nodes = [{'id': str(node), 'label': str(node)} for node in sorted(self.nodes, key=str)]
         
         edges = []
         seen = set()
@@ -194,8 +195,8 @@ class DijkstraGraph:
                 continue
             
             edges.append({
-                'from': u,
-                'to': v,
+                'from': str(u),  # Convertir a string
+                'to': str(v),    # Convertir a string
                 'label': str(round(w, 2)),
                 'weight': w
             })
@@ -203,11 +204,11 @@ class DijkstraGraph:
         
         return {'nodes': nodes, 'edges': edges}
     
-    def _get_path_edges(self, path: List[int]) -> List[Tuple[int, int]]:
+    def _get_path_edges(self, path: List) -> List[Tuple]:
         """Obtiene las aristas que forman el camino"""
         edges = []
         for i in range(len(path) - 1):
-            edges.append((path[i], path[i + 1]))
+            edges.append((str(path[i]), str(path[i + 1])))  # Convertir a strings
         return edges
 
 

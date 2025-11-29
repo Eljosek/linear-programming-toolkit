@@ -158,13 +158,13 @@ class KruskalGraph:
     
     def _get_graph_data(self) -> Dict:
         """Prepara datos del grafo original para visualización"""
-        nodes = [{'id': node, 'label': str(node)} for node in self.nodes]
+        nodes = [{'id': str(node), 'label': str(node)} for node in sorted(self.nodes, key=str)]
         
         edges = []
         for u, v, w in self.edges:
             edges.append({
-                'from': u,
-                'to': v,
+                'from': str(u),
+                'to': str(v),
                 'label': str(round(w, 2)),
                 'weight': w
             })
@@ -173,13 +173,13 @@ class KruskalGraph:
     
     def _get_mst_graph_data(self, mst_edges: List[Tuple[int, int, float]]) -> Dict:
         """Prepara datos del MST para visualización"""
-        nodes = [{'id': node, 'label': str(node)} for node in self.nodes]
+        nodes = [{'id': str(node), 'label': str(node)} for node in sorted(self.nodes, key=str)]
         
         edges = []
         for u, v, w in mst_edges:
             edges.append({
-                'from': u,
-                'to': v,
+                'from': str(u),
+                'to': str(v),
                 'label': str(round(w, 2)),
                 'weight': w,
                 'color': '#10b981'  # Emerald color for MST edges
