@@ -27,16 +27,65 @@
         border: 2px solid var(--kruskal-light);
         border-radius: 10px;
         background: #f8f9fa;
+        position: relative;
     }
     
-    #mstContainer.fullscreen, #graphContainer.fullscreen {
-        position: fixed;
-        top: 0;
-        left: 0;
+    #mstContainer:fullscreen,
+    #graphContainer:fullscreen {
         width: 100vw;
         height: 100vh;
-        z-index: 9999;
+        border: none;
         border-radius: 0;
+        background: #ffffff !important;
+    }
+    
+    #mstContainer:-webkit-full-screen,
+    #graphContainer:-webkit-full-screen {
+        width: 100vw;
+        height: 100vh;
+        border: none;
+        border-radius: 0;
+        background: #ffffff !important;
+    }
+    
+    #mstContainer:-moz-full-screen,
+    #graphContainer:-moz-full-screen {
+        width: 100vw;
+        height: 100vh;
+        border: none;
+        border-radius: 0;
+        background: #ffffff !important;
+    }
+    
+    #mstContainer::backdrop,
+    #graphContainer::backdrop {
+        background: #ffffff;
+    }
+    
+    #mstContainer::-webkit-backdrop,
+    #graphContainer::-webkit-backdrop {
+        background: #ffffff;
+    }
+    
+    .fullscreen-controls {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10000;
+        background: white;
+        padding: 8px;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        display: none;
+    }
+    
+    #mstContainer:fullscreen .fullscreen-controls,
+    #graphContainer:fullscreen .fullscreen-controls,
+    #mstContainer:-webkit-full-screen .fullscreen-controls,
+    #graphContainer:-webkit-full-screen .fullscreen-controls,
+    #mstContainer:-moz-full-screen .fullscreen-controls,
+    #graphContainer:-moz-full-screen .fullscreen-controls {
+        display: block;
     }
     
     .graph-controls {
@@ -131,7 +180,13 @@
                         <i class="fas fa-expand"></i> Pantalla Completa
                     </button>
                 </div>
-                <div id="mstContainer"></div>
+                <div id="mstContainer">
+                    <div class="fullscreen-controls">
+                        <button class="btn btn-sm btn-danger" onclick="exitFullscreenMST()" title="Salir de pantalla completa">
+                            <i class="fas fa-times"></i> Salir (ESC)
+                        </button>
+                    </div>
+                </div>
                 <div class="mt-3">
                     <span class="badge bg-success me-2">
                         <i class="fas fa-minus me-1"></i>Aristas en el MST
@@ -204,7 +259,13 @@
                         <i class="fas fa-expand"></i> Pantalla Completa
                     </button>
                 </div>
-                <div id="graphContainer"></div>
+                <div id="graphContainer">
+                    <div class="fullscreen-controls">
+                        <button class="btn btn-sm btn-danger" onclick="exitFullscreenGraph()" title="Salir de pantalla completa">
+                            <i class="fas fa-times"></i> Salir (ESC)
+                        </button>
+                    </div>
+                </div>
                 <div class="mt-3">
                     <p class="text-muted mb-0">
                         <i class="fas fa-info-circle me-2"></i>
@@ -380,7 +441,13 @@
             tooltipDelay: 200,
             zoomView: true,
             dragView: true
-        }
+        },
+        configure: {
+            enabled: false
+        },
+        autoResize: true,
+        height: '100%',
+        width: '100%'
     };
     
     // Visualización del MST
@@ -469,16 +536,50 @@
     
     window.toggleFullscreenMST = function() {
         const container = document.getElementById('mstContainer');
-        const btn = event.target.closest('button');
         
-        if (!container.classList.contains('fullscreen')) {
-            container.classList.add('fullscreen');
-            btn.innerHTML = '<i class="fas fa-compress"></i> Salir';
-            mstNetwork.fit();
+        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement) {
+            // Cambiar fondo a blanco antes de entrar en pantalla completa
+            container.style.backgroundColor = '#ffffff';
+            
+            // Entrar en pantalla completa
+            if (container.requestFullscreen) {
+                container.requestFullscreen();
+            } else if (container.webkitRequestFullscreen) {
+                container.webkitRequestFullscreen();
+            } else if (container.mozRequestFullScreen) {
+                container.mozRequestFullScreen();
+            } else if (container.msRequestFullscreen) {
+                container.msRequestFullscreen();
+            }
+            
+            // Ajustar grafo después de un momento
+            setTimeout(() => {
+                mstNetwork.fit();
+                mstNetwork.redraw();
+            }, 100);
         } else {
-            container.classList.remove('fullscreen');
-            btn.innerHTML = '<i class="fas fa-expand"></i> Pantalla Completa';
-            setTimeout(() => mstNetwork.fit(), 100);
+            // Salir de pantalla completa
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+    };
+    
+    window.exitFullscreenMST = function() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
         }
     };
     
@@ -504,18 +605,108 @@
     
     window.toggleFullscreenGraph = function() {
         const container = document.getElementById('graphContainer');
-        const btn = event.target.closest('button');
         
-        if (!container.classList.contains('fullscreen')) {
-            container.classList.add('fullscreen');
-            btn.innerHTML = '<i class="fas fa-compress"></i> Salir';
-            graphNetwork.fit();
+        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement) {
+            // Cambiar fondo a blanco antes de entrar en pantalla completa
+            container.style.backgroundColor = '#ffffff';
+            
+            // Entrar en pantalla completa
+            if (container.requestFullscreen) {
+                container.requestFullscreen();
+            } else if (container.webkitRequestFullscreen) {
+                container.webkitRequestFullscreen();
+            } else if (container.mozRequestFullScreen) {
+                container.mozRequestFullScreen();
+            } else if (container.msRequestFullscreen) {
+                container.msRequestFullscreen();
+            }
+            
+            // Ajustar grafo después de un momento
+            setTimeout(() => {
+                originalNetwork.fit();
+                originalNetwork.redraw();
+            }, 100);
         } else {
-            container.classList.remove('fullscreen');
-            btn.innerHTML = '<i class="fas fa-expand"></i> Pantalla Completa';
-            setTimeout(() => graphNetwork.fit(), 100);
+            // Salir de pantalla completa
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
         }
     };
+    
+    window.exitFullscreenGraph = function() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    };
+    
+    // Listeners para cambios de pantalla completa
+    document.addEventListener('fullscreenchange', function() {
+        const mstContainer = document.getElementById('mstContainer');
+        const graphContainer = document.getElementById('graphContainer');
+        
+        if (document.fullscreenElement === mstContainer) {
+            mstContainer.style.backgroundColor = '#ffffff';
+            setTimeout(() => {
+                mstNetwork.fit();
+                mstNetwork.redraw();
+            }, 100);
+        } else if (document.fullscreenElement === graphContainer) {
+            graphContainer.style.backgroundColor = '#ffffff';
+            setTimeout(() => {
+                graphNetwork.fit();
+                graphNetwork.redraw();
+            }, 100);
+        }
+    });
+    document.addEventListener('webkitfullscreenchange', function() {
+        const mstContainer = document.getElementById('mstContainer');
+        const graphContainer = document.getElementById('graphContainer');
+        
+        if (document.webkitFullscreenElement === mstContainer) {
+            mstContainer.style.backgroundColor = '#ffffff';
+            setTimeout(() => {
+                mstNetwork.fit();
+                mstNetwork.redraw();
+            }, 100);
+        } else if (document.webkitFullscreenElement === graphContainer) {
+            graphContainer.style.backgroundColor = '#ffffff';
+            setTimeout(() => {
+                graphNetwork.fit();
+                graphNetwork.redraw();
+            }, 100);
+        }
+    });
+    document.addEventListener('mozfullscreenchange', function() {
+        const mstContainer = document.getElementById('mstContainer');
+        const graphContainer = document.getElementById('graphContainer');
+        
+        if (document.mozFullScreenElement === mstContainer) {
+            mstContainer.style.backgroundColor = '#ffffff';
+            setTimeout(() => {
+                mstNetwork.fit();
+                mstNetwork.redraw();
+            }, 100);
+        } else if (document.mozFullScreenElement === graphContainer) {
+            graphContainer.style.backgroundColor = '#ffffff';
+            setTimeout(() => {
+                graphNetwork.fit();
+                graphNetwork.redraw();
+            }, 100);
+        }
+    });
     {% endif %}
 </script>
 {% endblock %}
